@@ -1097,3 +1097,19 @@ export type {
   EnvironmentProviderCapability,
   EnvironmentSupportStatus,
 } from "./environment-support.js";
+
+export {
+  BUSINESS_MODULES,
+  INDUSTRY_PRESETS,
+  getBusinessModule,
+  getBusinessEntitySpec,
+  getIndustryPreset,
+} from "./business-modules.js";
+export type {
+  BusinessModuleKey,
+  BusinessModuleSpec,
+  BusinessEntitySpec,
+  BusinessEntityFieldSpec,
+  BusinessEntityType,
+  IndustryPreset,
+} from "./business-modules.js";
