@@ -196,11 +196,15 @@ export const queryKeys = {
     catalog: ["business", "catalog"] as const,
     modules: (companyId: string) => ["business", "modules", companyId] as const,
     summary: (companyId: string) => ["business", "summary", companyId] as const,
+    financialSummary: (companyId: string) =>
+      ["business", "financial-summary", companyId] as const,
     entities: (
       companyId: string,
       moduleKey: string,
       entityType: string,
       q?: string,
     ) => ["business", "entities", companyId, moduleKey, entityType, q ?? ""] as const,
+    entity: (companyId: string, moduleKey: string, entityType: string, id: string) =>
+      ["business", "entity", companyId, moduleKey, entityType, id] as const,
   },
 };

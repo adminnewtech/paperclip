@@ -14,6 +14,7 @@ import {
   LifeBuoy,
   Megaphone,
   ShoppingBag,
+  LayoutDashboard,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -105,15 +106,18 @@ export function Business() {
               Paperclip can run your whole business — CRM, sales, invoicing,
               inventory, accounting, HR, helpdesk, marketing and e-commerce —
               from this same dashboard. Pick your industry and we'll turn on
-              the right modules and seed sensible defaults.
+              the right modules and seed your chart of accounts automatically.
             </p>
-            <div>
+            <div className="flex items-center gap-3">
               <Button asChild>
                 <Link to="/business/setup">
-                  Run the setup wizard
+                  Run setup wizard
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
+              <p className="text-xs text-muted-foreground">
+                Takes 30 seconds · fully reversible
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -141,9 +145,17 @@ export function Business() {
             {enabledKeys.size} module{enabledKeys.size === 1 ? "" : "s"} active in this workspace.
           </p>
         </div>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/business/setup">Manage modules</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="default" size="sm" asChild>
+            <Link to="/business/dashboard">
+              <LayoutDashboard className="h-4 w-4 mr-1.5" />
+              Dashboard
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/business/setup">Manage modules</Link>
+          </Button>
+        </div>
       </div>
       <ModuleGrid
         modules={catalogQuery.data?.modules ?? []}
@@ -171,22 +183,24 @@ function ModuleGrid({
         const count = counts.get(mod.key) ?? 0;
         return (
           <Link key={mod.key} to={enabled ? `/business/${mod.key}` : "/business/setup"}>
-            <Card className={enabled ? "" : "opacity-60"}>
+            <Card className={`transition-shadow hover:shadow-md ${enabled ? "" : "opacity-55"}`}>
               <CardContent className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="bg-muted/50 p-2">
+                  <div className={`rounded-lg p-2 ${enabled ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium">{mod.label}</span>
+                      <span className="text-xs text-muted-foreground">/</span>
+                      <span className="text-xs text-muted-foreground">{mod.arabicLabel}</span>
                       {!enabled && (
-                        <Badge variant="outline" className="text-xs">
-                          Not enabled
+                        <Badge variant="outline" className="text-[10px]">
+                          Off
                         </Badge>
                       )}
                       {enabled && count > 0 && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-[10px]">
                           {count}
                         </Badge>
                       )}
@@ -195,11 +209,14 @@ function ModuleGrid({
                       {mod.description}
                     </p>
                     {mod.replaces.length > 0 && (
-                      <p className="text-[11px] text-muted-foreground/70 mt-1">
+                      <p className="text-[11px] text-muted-foreground/60 mt-1">
                         Replaces: {mod.replaces.join(", ")}
                       </p>
                     )}
                   </div>
+                  {enabled && (
+                    <ArrowRight className="h-4 w-4 text-muted-foreground/40 shrink-0 mt-0.5" />
+                  )}
                 </div>
               </CardContent>
             </Card>

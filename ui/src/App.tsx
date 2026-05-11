@@ -25,6 +25,7 @@ import { GoalDetail } from "./pages/GoalDetail";
 import { Business } from "./pages/Business";
 import { BusinessSetup } from "./pages/BusinessSetup";
 import { BusinessModuleView } from "./pages/BusinessModuleView";
+import { BusinessDashboard } from "./pages/BusinessDashboard";
 import { Approvals } from "./pages/Approvals";
 import { ApprovalDetail } from "./pages/ApprovalDetail";
 import { Costs } from "./pages/Costs";
@@ -123,6 +124,7 @@ function boardRoutes() {
       <Route path="goals/:goalId" element={<GoalDetail />} />
       <Route path="business" element={<Business />} />
       <Route path="business/setup" element={<BusinessSetup />} />
+      <Route path="business/dashboard" element={<BusinessDashboard />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
