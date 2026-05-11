@@ -169,12 +169,19 @@ export function BusinessDashboard() {
             {totalEntities.toLocaleString()} total records
           </p>
         </div>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/business">
-            All modules
-            <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/business/analytics">
+              Analytics
+              <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+            </Link>
+          </Button>
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/business">
+              All modules
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Financial KPIs */}

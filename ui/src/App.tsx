@@ -26,6 +26,13 @@ import { Business } from "./pages/Business";
 import { BusinessSetup } from "./pages/BusinessSetup";
 import { BusinessModuleView } from "./pages/BusinessModuleView";
 import { BusinessDashboard } from "./pages/BusinessDashboard";
+import { BusinessFinancePage } from "./pages/BusinessFinancePage";
+import { BusinessSalesPage } from "./pages/BusinessSalesPage";
+import { BusinessAnalyticsPage } from "./pages/BusinessAnalyticsPage";
+import { BusinessHRPage } from "./pages/BusinessHRPage";
+import { BusinessInventoryPage } from "./pages/BusinessInventoryPage";
+import { BusinessCRMPage } from "./pages/BusinessCRMPage";
+import { BusinessHelpdeskPage } from "./pages/BusinessHelpdeskPage";
 import { Approvals } from "./pages/Approvals";
 import { ApprovalDetail } from "./pages/ApprovalDetail";
 import { Costs } from "./pages/Costs";
@@ -125,6 +132,19 @@ function boardRoutes() {
       <Route path="business" element={<Business />} />
       <Route path="business/setup" element={<BusinessSetup />} />
       <Route path="business/dashboard" element={<BusinessDashboard />} />
+      <Route path="business/analytics" element={<BusinessAnalyticsPage />} />
+      <Route path="business/finance" element={<BusinessFinancePage />} />
+      <Route path="business/finance/:tab" element={<BusinessFinancePage />} />
+      <Route path="business/sales" element={<BusinessSalesPage />} />
+      <Route path="business/sales/:tab" element={<BusinessSalesPage />} />
+      <Route path="business/hr" element={<BusinessHRPage />} />
+      <Route path="business/hr/:tab" element={<BusinessHRPage />} />
+      <Route path="business/inventory" element={<BusinessInventoryPage />} />
+      <Route path="business/inventory/:tab" element={<BusinessInventoryPage />} />
+      <Route path="business/crm" element={<BusinessCRMPage />} />
+      <Route path="business/crm/:tab" element={<BusinessCRMPage />} />
+      <Route path="business/helpdesk" element={<BusinessHelpdeskPage />} />
+      <Route path="business/helpdesk/:tab" element={<BusinessHelpdeskPage />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
@@ -319,7 +339,21 @@ export function App() {
           <Route path="business" element={<UnprefixedBoardRedirect />} />
           <Route path="business/setup" element={<UnprefixedBoardRedirect />} />
           <Route path="business/dashboard" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/analytics" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/finance" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/finance/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/sales" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/sales/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/hr" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/hr/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/inventory" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/inventory/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/crm" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/crm/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/helpdesk" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/helpdesk/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="business/:moduleKey" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/:moduleKey/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId/services" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId/configuration" element={<UnprefixedBoardRedirect />} />
