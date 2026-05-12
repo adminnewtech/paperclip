@@ -1139,6 +1139,21 @@ export type {
 } from "./messaging-templates.js";
 
 export {
+  MARKETING_FLOW_TEMPLATES,
+  getMarketingFlowTemplate,
+} from "./marketing-flow-templates.js";
+export type {
+  MarketingFlow,
+  MarketingFlowTemplate,
+  FlowTrigger,
+  FlowTriggerKind,
+  FlowAudience,
+  FlowStep,
+  FlowStepKind,
+  FlowEnrollment,
+} from "./marketing-flow-templates.js";
+
+export {
   GCC_CURRENCIES,
   GCC_COUNTRIES,
   GCC_CURRENCY_CODES,

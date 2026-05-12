@@ -31,8 +31,10 @@ import { sidebarPreferenceRoutes } from "./routes/sidebar-preferences.js";
 import { inboxDismissalRoutes } from "./routes/inbox-dismissals.js";
 import { businessRoutes } from "./routes/business.js";
 import { businessReportsRoutes } from "./routes/business-reports.js";
+import { marketingAutomationRoutes } from "./routes/marketing-automation.js";
 import { businessAgentsRoutes } from "./routes/business-agents.js";
 import { storefrontBuilderRoutes } from "./routes/storefront-builder.js";
+import { publicStorefrontRoutes } from "./routes/public-storefront.js";
 import { businessMessagingRoutes } from "./routes/business-messaging.js";
 import { businessPaymentsRoutes } from "./routes/business-payments.js";
 import { businessFxRoutes } from "./routes/business-fx.js";
@@ -186,6 +188,10 @@ export async function createApp(
   if (opts.betterAuthHandler) {
     app.all("/api/auth/{*authPath}", opts.betterAuthHandler);
   }
+  // Public, unauthenticated storefront API. Mounted BEFORE the company-scoped
+  // /api router so that the boardMutationGuard / company access checks do not
+  // apply to anonymous customers visiting a /shop/:slug page.
+  app.use("/api/public", publicStorefrontRoutes(db));
   app.use(llmRoutes(db));
 
   const hostServicesDisposers = new Map<string, () => void>();
@@ -229,6 +235,7 @@ export async function createApp(
   const businessStreamService = createBusinessStreamService();
   api.use(businessRoutes(db, businessStreamService));
   api.use(businessReportsRoutes(db));
+  api.use(marketingAutomationRoutes(db));
   api.use(businessAgentsRoutes(db));
   api.use(storefrontBuilderRoutes(db));
   api.use(businessMessagingRoutes(db));

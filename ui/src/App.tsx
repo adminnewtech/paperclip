@@ -34,6 +34,7 @@ import { BusinessInventoryPage } from "./pages/BusinessInventoryPage";
 import { BusinessCRMPage } from "./pages/BusinessCRMPage";
 import { BusinessHelpdeskPage } from "./pages/BusinessHelpdeskPage";
 import { BusinessMarketingPage } from "./pages/BusinessMarketingPage";
+import { BusinessMarketingFlowsPage } from "./pages/BusinessMarketingFlowsPage";
 import { BusinessEcommercePage } from "./pages/BusinessEcommercePage";
 import { BusinessBrainPage } from "./pages/BusinessBrainPage";
 import { BusinessAutomationsPage } from "./pages/BusinessAutomationsPage";
@@ -74,6 +75,14 @@ import { CliAuthPage } from "./pages/CliAuth";
 import { InviteLandingPage } from "./pages/InviteLanding";
 import { JoinRequestQueue } from "./pages/JoinRequestQueue";
 import { NotFoundPage } from "./pages/NotFound";
+import { StorefrontLayout } from "./pages/public/StorefrontLayout";
+import { StorefrontHomePage } from "./pages/public/StorefrontHomePage";
+import { StorefrontProductsPage } from "./pages/public/StorefrontProductsPage";
+import { StorefrontProductDetailPage } from "./pages/public/StorefrontProductDetailPage";
+import { StorefrontCartPage } from "./pages/public/StorefrontCartPage";
+import { StorefrontCheckoutPage } from "./pages/public/StorefrontCheckoutPage";
+import { StorefrontOrderPage } from "./pages/public/StorefrontOrderPage";
+import { StorefrontAccountPage } from "./pages/public/StorefrontAccountPage";
 import { useCompany } from "./context/CompanyContext";
 import { useDialogActions } from "./context/DialogContext";
 import { loadLastInboxTab } from "./lib/inbox";
@@ -156,6 +165,7 @@ function boardRoutes() {
       <Route path="business/helpdesk" element={<BusinessHelpdeskPage />} />
       <Route path="business/helpdesk/:tab" element={<BusinessHelpdeskPage />} />
       <Route path="business/marketing" element={<BusinessMarketingPage />} />
+      <Route path="business/marketing/flows" element={<BusinessMarketingFlowsPage />} />
       <Route path="business/marketing/:tab" element={<BusinessMarketingPage />} />
       <Route path="business/ecommerce" element={<BusinessEcommercePage />} />
       <Route path="business/ecommerce/:tab" element={<BusinessEcommercePage />} />
@@ -319,6 +329,22 @@ export function App() {
         <Route path="cli-auth/:id" element={<CliAuthPage />} />
         <Route path="invite/:token" element={<InviteLandingPage />} />
         <Route path="tests/perf/long-thread" element={<IssueChatLongThreadPerf />} />
+
+        {/*
+         * Public-facing storefront routes. These are mounted OUTSIDE the
+         * CloudAccessGate auth wall so anonymous customers can browse, buy,
+         * and track their orders without needing a Paperclip account. Each
+         * storefront is scoped by its public slug.
+         */}
+        <Route path="shop/:storefrontSlug" element={<StorefrontLayout />}>
+          <Route index element={<StorefrontHomePage />} />
+          <Route path="products" element={<StorefrontProductsPage />} />
+          <Route path="product/:productSlug" element={<StorefrontProductDetailPage />} />
+          <Route path="cart" element={<StorefrontCartPage />} />
+          <Route path="checkout" element={<StorefrontCheckoutPage />} />
+          <Route path="order/:orderId" element={<StorefrontOrderPage />} />
+          <Route path="account" element={<StorefrontAccountPage />} />
+        </Route>
 
         <Route element={<CloudAccessGate />}>
           <Route index element={<CompanyRootRedirect />} />
