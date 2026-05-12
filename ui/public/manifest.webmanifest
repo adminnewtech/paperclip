@@ -1,0 +1,33 @@
+{
+  "name": "Paperclip Business",
+  "short_name": "Paperclip",
+  "description": "AI-native business management for GCC",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#0a0a0a",
+  "lang": "ar",
+  "dir": "auto",
+  "categories": ["business", "productivity", "finance"],
+  "icons": [
+    { "src": "/icons/icon-72.png", "sizes": "72x72", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-96.png", "sizes": "96x96", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-128.png", "sizes": "128x128", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-144.png", "sizes": "144x144", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-152.png", "sizes": "152x152", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-384.png", "sizes": "384x384", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Dashboard", "url": "/dashboard", "icons": [{ "src": "/icons/shortcut-dashboard.png", "sizes": "96x96" }] },
+    { "name": "Business Dashboard", "url": "/business", "icons": [{ "src": "/icons/shortcut-business.png", "sizes": "96x96" }] },
+    { "name": "Invoices", "url": "/business/sales", "icons": [{ "src": "/icons/shortcut-invoice.png", "sizes": "96x96" }] },
+    { "name": "AI Co-Founder", "url": "/business/analyst", "icons": [{ "src": "/icons/shortcut-ai.png", "sizes": "96x96" }] }
+  ],
+  "screenshots": []
+}
