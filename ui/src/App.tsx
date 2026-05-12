@@ -240,6 +240,11 @@ function boardRoutes() {
       <Route path="business/clinic/patients/:id" element={<ClinicPatientDetailPage />} />
       <Route path="business/clinic/appointments" element={<ClinicAppointmentsPage />} />
       <Route path="business/clinic/visits/:id" element={<ClinicVisitPage />} />
+      <Route path="business/retail" element={<RetailDashboardPage />} />
+      <Route path="business/retail/pos" element={<RetailPosPage />} />
+      <Route path="business/retail/inventory" element={<RetailInventoryPage />} />
+      <Route path="business/retail/loyalty" element={<RetailLoyaltyPage />} />
+      <Route path="business/retail/end-of-day" element={<RetailEndOfDayPage />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
