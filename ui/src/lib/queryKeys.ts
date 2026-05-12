@@ -207,5 +207,6 @@ export const queryKeys = {
     entity: (companyId: string, moduleKey: string, entityType: string, id: string) =>
       ["business", "entity", companyId, moduleKey, entityType, id] as const,
     attachments: (entityId: string) => ["business", "attachments", entityId] as const,
+    fxRates: ["business", "fx-rates"] as const,
   },
 };

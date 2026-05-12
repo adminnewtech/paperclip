@@ -1113,3 +1113,35 @@ export type {
   BusinessEntityType,
   IndustryPreset,
 } from "./business-modules.js";
+
+export {
+  MESSAGE_TEMPLATES,
+  getMessageTemplate,
+  renderMessageTemplate,
+} from "./messaging-templates.js";
+export type {
+  MessageTemplate,
+  MessageTemplateChannel,
+  MessageTemplateCategory,
+} from "./messaging-templates.js";
+
+export {
+  GCC_CURRENCIES,
+  GCC_COUNTRIES,
+  GCC_CURRENCY_CODES,
+  GCC_COUNTRY_CODES,
+  DEFAULT_COUNTRY,
+  DEFAULT_CURRENCY,
+  convertCurrency,
+  formatCurrency,
+  getDecimals,
+  isGccCountryCode,
+  isGccCurrency,
+  parseCurrency,
+} from "./gcc-locale.js";
+export type {
+  GccCountryCode,
+  GccCountryInfo,
+  GccCurrency,
+  GccCurrencyInfo,
+} from "./gcc-locale.js";

@@ -28,6 +28,7 @@ import { queryKeys } from "../lib/queryKeys";
 import { businessApi, type BusinessFinancialSummary } from "../api/business";
 import { PageSkeleton } from "../components/PageSkeleton";
 import { useBusinessStreamInvalidation } from "../hooks/useBusinessStream";
+import { SmartInputBar } from "../components/business/SmartInputBar";
 
 const MODULE_ICONS: Record<string, LucideIcon> = {
   crm: Users,
@@ -165,6 +166,7 @@ export function BusinessDashboard() {
 
   return (
     <div className="space-y-6">
+      <SmartInputBar />
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Business Dashboard</h1>
