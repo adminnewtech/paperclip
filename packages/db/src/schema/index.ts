@@ -77,3 +77,4 @@ export { pluginWebhookDeliveries } from "./plugin_webhooks.js";
 export { pluginLogs } from "./plugin_logs.js";
 export { businessModules } from "./business_modules.js";
 export { businessEntities } from "./business_entities.js";
+export { businessAttachments } from "./business_attachments.js";

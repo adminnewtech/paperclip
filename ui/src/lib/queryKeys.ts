@@ -206,5 +206,6 @@ export const queryKeys = {
     ) => ["business", "entities", companyId, moduleKey, entityType, q ?? ""] as const,
     entity: (companyId: string, moduleKey: string, entityType: string, id: string) =>
       ["business", "entity", companyId, moduleKey, entityType, id] as const,
+    attachments: (entityId: string) => ["business", "attachments", entityId] as const,
   },
 };

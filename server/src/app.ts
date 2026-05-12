@@ -31,6 +31,13 @@ import { sidebarPreferenceRoutes } from "./routes/sidebar-preferences.js";
 import { inboxDismissalRoutes } from "./routes/inbox-dismissals.js";
 import { businessRoutes } from "./routes/business.js";
 import { businessReportsRoutes } from "./routes/business-reports.js";
+import { businessAutomationsRoutes } from "./routes/business-automations.js";
+import { businessAiRoutes } from "./routes/business-ai.js";
+import { businessSearchRoutes } from "./routes/business-search.js";
+import { businessExportsRoutes } from "./routes/business-exports.js";
+import { businessStreamRoutes } from "./routes/business-stream.js";
+import { businessAttachmentsRoutes } from "./routes/business-attachments.js";
+import { createBusinessStreamService } from "./services/business-stream-service.js";
 import { instanceSettingsRoutes } from "./routes/instance-settings.js";
 import {
   instanceDatabaseBackupRoutes,
@@ -212,8 +219,15 @@ export async function createApp(
   api.use(sidebarBadgeRoutes(db));
   api.use(sidebarPreferenceRoutes(db));
   api.use(inboxDismissalRoutes(db));
+  const businessStreamService = createBusinessStreamService();
   api.use(businessRoutes(db));
   api.use(businessReportsRoutes(db));
+  api.use(businessAutomationsRoutes(db));
+  api.use(businessAiRoutes(db));
+  api.use(businessSearchRoutes(db));
+  api.use(businessExportsRoutes(db));
+  api.use(businessStreamRoutes(db, businessStreamService));
+  api.use(businessAttachmentsRoutes(db));
   api.use(instanceSettingsRoutes(db));
   if (opts.databaseBackupService) {
     api.use(instanceDatabaseBackupRoutes(opts.databaseBackupService));

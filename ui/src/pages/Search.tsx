@@ -14,12 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useNavigate, useSearchParams } from "@/lib/router";
+import { Link, useNavigate, useSearchParams } from "@/lib/router";
 import { useCompany } from "../context/CompanyContext";
 import { useBreadcrumbs } from "../context/BreadcrumbContext";
 import { useDialogActions } from "../context/DialogContext";
 import { searchApi } from "../api/search";
 import { agentsApi } from "../api/agents";
+import { businessSearchApi, type BusinessSearchResultRow } from "../api/businessSearch";
 import { queryKeys } from "../lib/queryKeys";
 import { loadRecentSearches, pushRecentSearch } from "../lib/recent-searches";
 import { PageTabBar, type PageTabItem } from "../components/PageTabBar";
@@ -39,6 +40,13 @@ const SCOPE_LABELS: Record<CompanySearchScope, string> = {
   projects: "Projects",
 };
 
+// Extra scope label rendered alongside the platform scopes. Business results
+// come from a separate endpoint (`/companies/:id/business/search`) and are
+// rendered as their own subgroup; the entry exists here so future iterations
+// can promote "business" / "business:invoices" / etc. into the core scope
+// union without re-plumbing the labels map.
+const BUSINESS_SCOPE_LABEL = "Business";
+
 type SubGroupKey = "issues" | "comments" | "documents" | "agents" | "projects";
 
 const SUBGROUP_ORDER: SubGroupKey[] = ["issues", "comments", "documents", "agents", "projects"];
@@ -54,11 +62,46 @@ const SUBGROUP_LABELS: Record<SubGroupKey, string> = {
 function classifyResult(result: CompanySearchResult): SubGroupKey {
   if (result.type === "agent") return "agents";
   if (result.type === "project") return "projects";
+  // Future: results carrying a `moduleKey` field would route here. Today the
+  // shared search type only exposes issue/agent/project, so business results
+  // arrive via the dedicated business-search endpoint and are rendered in a
+  // separate subgroup below.
   const matched = new Set(result.matchedFields);
   if (matched.has("title") || matched.has("identifier") || matched.has("description")) return "issues";
   if (matched.has("comment")) return "comments";
   if (matched.has("document")) return "documents";
   return "issues";
+}
+
+/** Module-prefixed label used to head the per-module business sub-sections. */
+function businessModuleLabel(moduleKey: string): string {
+  if (!moduleKey) return BUSINESS_SCOPE_LABEL;
+  const head = moduleKey.charAt(0).toUpperCase() + moduleKey.slice(1);
+  return `${BUSINESS_SCOPE_LABEL} · ${head}`;
+}
+
+function groupBusinessResultsByModule(
+  results: ReadonlyArray<BusinessSearchResultRow>,
+): Array<{ moduleKey: string; results: BusinessSearchResultRow[] }> {
+  const buckets = new Map<string, BusinessSearchResultRow[]>();
+  for (const row of results) {
+    const list = buckets.get(row.moduleKey) ?? [];
+    list.push(row);
+    buckets.set(row.moduleKey, list);
+  }
+  return Array.from(buckets.entries())
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([moduleKey, rows]) => ({ moduleKey, results: rows }));
+}
+
+function formatBusinessAmount(amountCents: number | null, currency: string | null): string | null {
+  if (amountCents === null || amountCents === undefined) return null;
+  const amount = amountCents / 100;
+  const formatted = amount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return currency ? `${formatted} ${currency}` : formatted;
 }
 
 function buildSubgroups(results: CompanySearchResult[]): Array<{ key: SubGroupKey; results: CompanySearchResult[] }> {
@@ -201,6 +244,20 @@ export function Search() {
     enabled: !!selectedCompanyId,
   });
 
+  // Business search runs in parallel with the core company search so the
+  // Business section can populate without blocking issues/agents/projects.
+  // It only fires when a query is present and we have a selected company.
+  const { data: businessData } = useQuery({
+    queryKey: ["business-search", selectedCompanyId ?? "__no-company__", trimmedQuery],
+    queryFn: () =>
+      businessSearchApi.search(selectedCompanyId!, {
+        q: trimmedQuery,
+        limit: COMPANY_SEARCH_DEFAULT_LIMIT,
+      }),
+    enabled: queryEnabled,
+    placeholderData: (previousData) => previousData,
+  });
+
   const agentsById = useMemo<ReadonlyMap<string, Pick<Agent, "id" | "name">>>(() => {
     const map = new Map<string, Pick<Agent, "id" | "name">>();
     for (const agent of agents ?? []) map.set(agent.id, agent);
@@ -262,7 +319,9 @@ export function Search() {
   }, [focusInput]);
 
   const counts = data?.countsByType ?? { issue: 0, agent: 0, project: 0 };
-  const totalResults = data?.results.length ?? 0;
+  const businessResults = useMemo(() => businessData?.results ?? [], [businessData?.results]);
+  const businessGroups = useMemo(() => groupBusinessResultsByModule(businessResults), [businessResults]);
+  const totalResults = (data?.results.length ?? 0) + businessResults.length;
 
   const tabItems = useMemo<PageTabItem[]>(() => {
     function pill(value: number) {
@@ -296,8 +355,8 @@ export function Search() {
 
   const showInitialState = !trimmedQuery;
   const isLoading = queryEnabled && isFetching && !data;
-  const hasResults = !!data && totalResults > 0;
-  const isEmpty = !!data && !isFetching && totalResults === 0;
+  const hasResults = (!!data && totalResults > 0) || businessResults.length > 0;
+  const isEmpty = !!data && !isFetching && totalResults === 0 && businessResults.length === 0;
   const hasError = !!error && !isLoading;
   const apiError = hasError ? shapeError(error) : null;
   const apiMessage = data?.results === undefined && data ? null : null;
@@ -393,6 +452,7 @@ export function Search() {
                 recentSearches={recentSearches}
                 onRecentClick={handleRecentClick}
                 subgroups={subgroups}
+                businessGroups={businessGroups}
                 totalResults={totalResults}
                 isFetching={isFetching && !!data}
                 agentsById={agentsById}
@@ -421,6 +481,7 @@ interface SearchTabContentProps {
   recentSearches: string[];
   onRecentClick: (query: string) => void;
   subgroups: Array<{ key: SubGroupKey; results: CompanySearchResult[] }>;
+  businessGroups: Array<{ moduleKey: string; results: BusinessSearchResultRow[] }>;
   totalResults: number;
   isFetching: boolean;
   agentsById: ReadonlyMap<string, Pick<Agent, "id" | "name">>;
@@ -442,6 +503,7 @@ function SearchTabContent({
   recentSearches,
   onRecentClick,
   subgroups,
+  businessGroups,
   totalResults,
   isFetching,
   agentsById,
@@ -586,32 +648,59 @@ function SearchTabContent({
       </div>
       <div className="flex flex-col pb-10">
         {scope === "all" ? (
-          subgroups.map((group, groupIndex) => (
-            <section
-              key={group.key}
-              aria-label={SUBGROUP_LABELS[group.key]}
-              className={cn("flex flex-col", groupIndex > 0 && "mt-6")}
-            >
-              <IssueGroupHeader
-                label={SUBGROUP_LABELS[group.key]}
-                trailing={
-                  <span className="text-xs font-normal tabular-nums text-muted-foreground">
-                    {group.results.length}
-                  </span>
-                }
-                className="pt-2 pb-1 text-[11px] tracking-wider text-muted-foreground"
-              />
-              <div className="flex flex-col gap-y-1">
-                {group.results.map((result) => (
-                  <SearchResultRow
-                    key={`${result.type}:${result.id}:${result.href}`}
-                    result={result}
-                    agentsById={agentsById}
-                  />
-                ))}
-              </div>
-            </section>
-          ))
+          <>
+            {subgroups.map((group, groupIndex) => (
+              <section
+                key={group.key}
+                aria-label={SUBGROUP_LABELS[group.key]}
+                className={cn("flex flex-col", groupIndex > 0 && "mt-6")}
+              >
+                <IssueGroupHeader
+                  label={SUBGROUP_LABELS[group.key]}
+                  trailing={
+                    <span className="text-xs font-normal tabular-nums text-muted-foreground">
+                      {group.results.length}
+                    </span>
+                  }
+                  className="pt-2 pb-1 text-[11px] tracking-wider text-muted-foreground"
+                />
+                <div className="flex flex-col gap-y-1">
+                  {group.results.map((result) => (
+                    <SearchResultRow
+                      key={`${result.type}:${result.id}:${result.href}`}
+                      result={result}
+                      agentsById={agentsById}
+                    />
+                  ))}
+                </div>
+              </section>
+            ))}
+            {businessGroups.map((group, groupIndex) => (
+              <section
+                key={`business:${group.moduleKey}`}
+                aria-label={businessModuleLabel(group.moduleKey)}
+                className={cn(
+                  "flex flex-col",
+                  (subgroups.length > 0 || groupIndex > 0) && "mt-6",
+                )}
+              >
+                <IssueGroupHeader
+                  label={businessModuleLabel(group.moduleKey)}
+                  trailing={
+                    <span className="text-xs font-normal tabular-nums text-muted-foreground">
+                      {group.results.length}
+                    </span>
+                  }
+                  className="pt-2 pb-1 text-[11px] tracking-wider text-muted-foreground"
+                />
+                <div className="flex flex-col gap-y-1">
+                  {group.results.map((result) => (
+                    <BusinessSearchRow key={`business:${result.id}`} result={result} />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </>
         ) : (
           <div className="flex flex-col gap-y-1">
             {subgroups
@@ -623,9 +712,55 @@ function SearchTabContent({
                   agentsById={agentsById}
                 />
               ))}
+            {businessGroups
+              .flatMap((group) => group.results)
+              .map((result) => (
+                <BusinessSearchRow key={`business:${result.id}`} result={result} />
+              ))}
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+interface BusinessSearchRowProps {
+  result: BusinessSearchResultRow;
+}
+
+function BusinessSearchRow({ result }: BusinessSearchRowProps) {
+  const amount = formatBusinessAmount(result.amountCents, result.currency);
+  const heading = result.code ?? result.name ?? result.id;
+  const subheading = result.code && result.name && result.code !== result.name ? result.name : null;
+  return (
+    <Link
+      to={result.url}
+      className="flex items-start gap-3 rounded-md px-3 py-2 text-sm hover:bg-accent/40"
+    >
+      <div className="flex flex-1 flex-col gap-0.5 overflow-hidden">
+        <div className="flex items-center gap-2 truncate">
+          <span className="truncate font-medium">{heading}</span>
+          {subheading ? (
+            <span className="truncate text-muted-foreground">· {subheading}</span>
+          ) : null}
+        </div>
+        <div className="flex items-center gap-2 text-[11px] uppercase tracking-wide text-muted-foreground">
+          <span>{result.moduleKey}</span>
+          <span aria-hidden>·</span>
+          <span>{result.entityType}</span>
+          <span aria-hidden>·</span>
+          <span>{result.status}</span>
+          {amount ? (
+            <>
+              <span aria-hidden>·</span>
+              <span className="tabular-nums normal-case tracking-normal">{amount}</span>
+            </>
+          ) : null}
+        </div>
+        {result.snippet ? (
+          <div className="truncate text-xs text-muted-foreground">{result.snippet}</div>
+        ) : null}
+      </div>
+    </Link>
   );
 }
