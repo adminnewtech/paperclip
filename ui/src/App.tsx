@@ -38,7 +38,11 @@ import { BusinessEcommercePage } from "./pages/BusinessEcommercePage";
 import { BusinessBrainPage } from "./pages/BusinessBrainPage";
 import { BusinessAutomationsPage } from "./pages/BusinessAutomationsPage";
 import { BusinessMessagingPage } from "./pages/BusinessMessagingPage";
+import { BusinessPaymentsPage } from "./pages/BusinessPaymentsPage";
 import { BusinessAnalystPage } from "./pages/BusinessAnalystPage";
+import { BusinessAgentsHirePage } from "./pages/BusinessAgentsHirePage";
+import { BusinessAgentDetailPage } from "./pages/BusinessAgentDetailPage";
+import { BusinessStorefrontBuilderPage } from "./pages/BusinessStorefrontBuilderPage";
 import { Approvals } from "./pages/Approvals";
 import { ApprovalDetail } from "./pages/ApprovalDetail";
 import { Costs } from "./pages/Costs";
@@ -155,10 +159,14 @@ function boardRoutes() {
       <Route path="business/marketing/:tab" element={<BusinessMarketingPage />} />
       <Route path="business/ecommerce" element={<BusinessEcommercePage />} />
       <Route path="business/ecommerce/:tab" element={<BusinessEcommercePage />} />
+      <Route path="business/storefront-builder" element={<BusinessStorefrontBuilderPage />} />
       <Route path="business/brain" element={<BusinessBrainPage />} />
       <Route path="business/automations" element={<BusinessAutomationsPage />} />
       <Route path="business/analyst" element={<BusinessAnalystPage />} />
+      <Route path="business/agents/hire" element={<BusinessAgentsHirePage />} />
+      <Route path="business/agents/:agentSlug" element={<BusinessAgentDetailPage />} />
       <Route path="business/messaging" element={<BusinessMessagingPage />} />
+      <Route path="business/payments" element={<BusinessPaymentsPage />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
@@ -373,6 +381,7 @@ export function App() {
           <Route path="business/brain" element={<UnprefixedBoardRedirect />} />
           <Route path="business/automations" element={<UnprefixedBoardRedirect />} />
           <Route path="business/messaging" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/payments" element={<UnprefixedBoardRedirect />} />
           <Route path="business/:moduleKey" element={<UnprefixedBoardRedirect />} />
           <Route path="business/:moduleKey/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId" element={<UnprefixedBoardRedirect />} />

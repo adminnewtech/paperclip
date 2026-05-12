@@ -1115,6 +1115,19 @@ export type {
 } from "./business-modules.js";
 
 export {
+  BUSINESS_AGENTS,
+  getBusinessAgentDefinition,
+  listBusinessAgentDefinitions,
+} from "./business-agents.js";
+export type {
+  BusinessAgentSlug,
+  BusinessAgentSchedule,
+  BusinessAgentCapabilityTrigger,
+  BusinessAgentCapability,
+  BusinessAgentDefinition,
+} from "./business-agents.js";
+
+export {
   MESSAGE_TEMPLATES,
   getMessageTemplate,
   renderMessageTemplate,
