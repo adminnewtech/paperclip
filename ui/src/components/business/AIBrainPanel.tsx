@@ -29,6 +29,7 @@ function inferKind(moduleKey: string, entityType: string): AssistKind {
   if (moduleKey === "finance" && entityType === "expense") return "categorize";
   if (moduleKey === "crm" && entityType === "contact") return "summarize";
   if (moduleKey === "helpdesk" && entityType === "ticket") return "classify";
+  if (moduleKey === "sales" && entityType === "invoice") return "summarize";
   return "none";
 }
 

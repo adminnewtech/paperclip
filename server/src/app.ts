@@ -220,7 +220,7 @@ export async function createApp(
   api.use(sidebarPreferenceRoutes(db));
   api.use(inboxDismissalRoutes(db));
   const businessStreamService = createBusinessStreamService();
-  api.use(businessRoutes(db));
+  api.use(businessRoutes(db, businessStreamService));
   api.use(businessReportsRoutes(db));
   api.use(businessAutomationsRoutes(db));
   api.use(businessAiRoutes(db));

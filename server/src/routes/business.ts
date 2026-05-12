@@ -14,6 +14,7 @@ import {
 import { validate } from "../middleware/validate.js";
 import { assertCompanyAccess, getActorInfo } from "./authz.js";
 import { logActivity } from "../services/index.js";
+import type { BusinessStreamService } from "../services/business-stream-service.js";
 
 // ---------------------------------------------------------------------------
 // Validation schemas
@@ -222,7 +223,7 @@ async function seedChartOfAccounts(
 // Router
 // ---------------------------------------------------------------------------
 
-export function businessRoutes(db: Db) {
+export function businessRoutes(db: Db, streamService?: BusinessStreamService) {
   const router = Router();
 
   // ---------- Catalog (static; no DB) ----------
@@ -305,6 +306,7 @@ export function businessRoutes(db: Db) {
         .select()
         .from(businessModules)
         .where(eq(businessModules.companyId, companyId));
+      streamService?.emit({ kind: "summary.changed", companyId });
       res.status(201).json({ modules: rows, preset });
     },
   );
@@ -357,6 +359,7 @@ export function businessRoutes(db: Db) {
         });
       }
 
+      streamService?.emit({ kind: "summary.changed", companyId });
       res.json(row);
     },
   );
@@ -577,6 +580,14 @@ export function businessRoutes(db: Db) {
           entityId: row.id,
           details: { moduleKey, entityType, name: row.name ?? row.code ?? null },
         });
+        streamService?.emit({
+          kind: "entity.created",
+          companyId,
+          moduleKey,
+          entityType,
+          entity: row as never,
+        });
+        streamService?.emit({ kind: "summary.changed", companyId });
       }
 
       res.status(201).json(row);
@@ -628,6 +639,13 @@ export function businessRoutes(db: Db) {
         res.status(404).json({ error: "Not found" });
         return;
       }
+      streamService?.emit({
+        kind: "entity.updated",
+        companyId,
+        moduleKey,
+        entityType,
+        entity: row as never,
+      });
       res.json(row);
     },
   );
@@ -655,6 +673,14 @@ export function businessRoutes(db: Db) {
         res.status(404).json({ error: "Not found" });
         return;
       }
+      streamService?.emit({
+        kind: "entity.deleted",
+        companyId,
+        moduleKey,
+        entityType,
+        entityId: id,
+      });
+      streamService?.emit({ kind: "summary.changed", companyId });
       res.status(204).end();
     },
   );

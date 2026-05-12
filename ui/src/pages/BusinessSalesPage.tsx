@@ -46,6 +46,9 @@ import { queryKeys } from "../lib/queryKeys";
 import { businessApi, type BusinessEntityRow } from "../api/business";
 import { EmptyState } from "../components/EmptyState";
 import { PageSkeleton } from "../components/PageSkeleton";
+import { ExportMenu, ZatcaBadge } from "../components/business/ExportMenu";
+import { AttachmentList } from "../components/business/AttachmentList";
+import { AIBrainPanel } from "../components/business/AIBrainPanel";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -1229,6 +1232,15 @@ function InvoiceDetail({ invoice, companyId, onBack, onRecordPayment }: InvoiceD
             <Printer className="h-3.5 w-3.5 mr-1.5" />
             Print
           </Button>
+          <ZatcaBadge
+            invoice={{
+              issueTimestamp: (data.issueDate as string | undefined) ?? null,
+              subtotalCents: Math.round(subtotal * 100),
+              vatCents: Math.round(taxTotal * 100),
+              totalCents: invoice.amountCents ?? Math.round(grandTotal * 100),
+            }}
+          />
+          <ExportMenu.Invoice invoiceId={invoice.id} companyId={companyId} />
         </div>
       </div>
 
@@ -1441,6 +1453,16 @@ function InvoiceDetail({ invoice, companyId, onBack, onRecordPayment }: InvoiceD
             )}
           </CardContent>
         </Card>
+      </div>
+
+      <div className="space-y-4 mt-6">
+        <AIBrainPanel
+          companyId={companyId}
+          moduleKey="sales"
+          entityType="invoice"
+          entityId={invoice.id}
+        />
+        <AttachmentList entityId={invoice.id} companyId={companyId} />
       </div>
     </div>
   );

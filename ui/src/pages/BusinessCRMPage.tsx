@@ -56,6 +56,8 @@ import { queryKeys } from "../lib/queryKeys";
 import { businessApi, type BusinessEntityRow } from "../api/business";
 import { EmptyState } from "../components/EmptyState";
 import { PageSkeleton } from "../components/PageSkeleton";
+import { AIBrainPanel } from "@/components/business/AIBrainPanel";
+import { AttachmentList } from "@/components/business/AttachmentList";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -1656,6 +1658,18 @@ function DealDetailDialog({
               ))}
             </div>
           </div>
+
+          {deal.id && (
+            <div className="space-y-4 mt-6">
+              <AIBrainPanel
+                companyId={companyId}
+                moduleKey="crm"
+                entityType="deal"
+                entityId={deal.id}
+              />
+              <AttachmentList entityId={deal.id} companyId={companyId} />
+            </div>
+          )}
         </div>
 
         <DialogFooter className="flex-row justify-between gap-2 pt-2">

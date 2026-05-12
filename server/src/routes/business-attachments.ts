@@ -41,11 +41,14 @@ function isAllowedMime(mime: string): boolean {
   });
 }
 
+const STORAGE_DIR =
+  process.env.PAPERCLIP_BUSINESS_ATTACHMENTS_DIR ??
+  (fs.existsSync("/data")
+    ? "/data/business-attachments"
+    : path.resolve(process.cwd(), "data/business-attachments"));
+
 function attachmentStorageRoot(): string {
-  return (
-    process.env.PAPERCLIP_BUSINESS_ATTACHMENTS_DIR ??
-    "/data/business-attachments"
-  );
+  return STORAGE_DIR;
 }
 
 function sanitizeFilename(name: string): string {

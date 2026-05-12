@@ -47,6 +47,8 @@ import { queryKeys } from "../lib/queryKeys";
 import { businessApi, type BusinessEntityRow } from "../api/business";
 import { EmptyState } from "../components/EmptyState";
 import { PageSkeleton } from "../components/PageSkeleton";
+import { AIBrainPanel } from "@/components/business/AIBrainPanel";
+import { AttachmentList } from "@/components/business/AttachmentList";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -688,6 +690,18 @@ function TicketDetail({ ticket, onBack, companyId }: TicketDetailProps) {
         <p className="text-sm text-destructive">
           {(statusMutation.error as Error).message}
         </p>
+      )}
+
+      {ticket.id && (
+        <div className="space-y-4 mt-6">
+          <AIBrainPanel
+            companyId={companyId}
+            moduleKey="helpdesk"
+            entityType="ticket"
+            entityId={ticket.id}
+          />
+          <AttachmentList entityId={ticket.id} companyId={companyId} />
+        </div>
       )}
     </div>
   );

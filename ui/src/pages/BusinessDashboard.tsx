@@ -15,6 +15,8 @@ import {
   ShoppingBag,
   Briefcase,
   ArrowRight,
+  Sparkles,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,6 +27,7 @@ import { useBreadcrumbs } from "../context/BreadcrumbContext";
 import { queryKeys } from "../lib/queryKeys";
 import { businessApi, type BusinessFinancialSummary } from "../api/business";
 import { PageSkeleton } from "../components/PageSkeleton";
+import { useBusinessStreamInvalidation } from "../hooks/useBusinessStream";
 
 const MODULE_ICONS: Record<string, LucideIcon> = {
   crm: Users,
@@ -103,6 +106,7 @@ function KpiCard({ title, value, sub, icon: Icon, tone = "default", href }: KpiC
 
 export function BusinessDashboard() {
   const { selectedCompanyId } = useCompany();
+  useBusinessStreamInvalidation(selectedCompanyId);
   const { setBreadcrumbs } = useBreadcrumbs();
 
   useEffect(() => {
@@ -170,6 +174,18 @@ export function BusinessDashboard() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/business/brain">
+              <Sparkles className="ml-1.5 h-3.5 w-3.5" />
+              Business Brain
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/business/automations">
+              <Zap className="ml-1.5 h-3.5 w-3.5" />
+              Automations
+            </Link>
+          </Button>
           <Button variant="outline" size="sm" asChild>
             <Link to="/business/analytics">
               Analytics
