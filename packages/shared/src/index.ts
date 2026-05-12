@@ -1152,6 +1152,21 @@ export type {
 } from "./business-modules.js";
 
 export {
+  INDUSTRY_VERTICALS,
+  getIndustryVertical,
+  listIndustryVerticals,
+} from "./industry-verticals.js";
+export type {
+  VerticalKey,
+  VerticalFieldType,
+  VerticalEntityFieldSpec,
+  VerticalEntitySpec,
+  VerticalDashboardKpi,
+  VerticalIndustryAverages,
+  IndustryVertical,
+} from "./industry-verticals.js";
+
+export {
   BUSINESS_ROLES,
   BUSINESS_MODULE_KEYS_FOR_PERMS,
   ROLE_PRESETS,

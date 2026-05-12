@@ -30,6 +30,7 @@ import { sidebarBadgeRoutes } from "./routes/sidebar-badges.js";
 import { sidebarPreferenceRoutes } from "./routes/sidebar-preferences.js";
 import { inboxDismissalRoutes } from "./routes/inbox-dismissals.js";
 import { businessRoutes } from "./routes/business.js";
+import { salonsRoutes } from "./routes/verticals/salons.js";
 import { businessReportsRoutes } from "./routes/business-reports.js";
 import { businessAccountingRoutes } from "./routes/business-accounting.js";
 import { createAutoPostingService } from "./services/accounting/auto-posting-service.js";
@@ -58,6 +59,9 @@ import { businessBulkRoutes } from "./routes/business-bulk.js";
 import { businessImportRoutes } from "./routes/business-import.js";
 import { businessStreamRoutes } from "./routes/business-stream.js";
 import { businessAttachmentsRoutes } from "./routes/business-attachments.js";
+import { clinicsRoutes } from "./routes/verticals/clinics.js";
+import { restaurantsRoutes } from "./routes/verticals/restaurants.js";
+import { retailRoutes } from "./routes/verticals/retail.js";
 import { createBusinessStreamService } from "./services/business-stream-service.js";
 import { createBusinessAuditService } from "./services/business-audit-service.js";
 import { createBusinessRbacService } from "./services/business-rbac-service.js";
@@ -269,6 +273,7 @@ export async function createApp(
   api.use(businessAgentMemoryRoutes(db));
   api.use(storefrontBuilderRoutes(db));
   api.use(businessMessagingRoutes(db));
+  api.use(salonsRoutes(db));
   api.use(businessPaymentsRoutes(db));
   api.use(businessBankingRoutes(db));
   api.use(businessFxRoutes(db));
@@ -291,6 +296,9 @@ export async function createApp(
   api.use(businessImportRoutes(db));
   api.use(businessStreamRoutes(db, businessStreamService));
   api.use(businessAttachmentsRoutes(db));
+  api.use(clinicsRoutes(db));
+  api.use(restaurantsRoutes(db));
+  api.use(retailRoutes(db));
   api.use(instanceSettingsRoutes(db));
   if (opts.databaseBackupService) {
     api.use(instanceDatabaseBackupRoutes(opts.databaseBackupService));

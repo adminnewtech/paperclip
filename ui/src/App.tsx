@@ -60,6 +60,25 @@ import { BusinessStorefrontBuilderPage } from "./pages/BusinessStorefrontBuilder
 import { BusinessImportPage } from "./pages/BusinessImportPage";
 import { BusinessAuditLogPage } from "./pages/BusinessAuditLogPage";
 import { BusinessRolesPermissionsPage } from "./pages/BusinessRolesPermissionsPage";
+import { SalonDashboardPage } from "./pages/verticals/SalonDashboardPage";
+import { SalonAppointmentsPage } from "./pages/verticals/SalonAppointmentsPage";
+import { SalonServicesPage } from "./pages/verticals/SalonServicesPage";
+import { SalonStaffPage } from "./pages/verticals/SalonStaffPage";
+import { RestaurantDashboardPage } from "./pages/verticals/RestaurantDashboardPage";
+import { RestaurantPosPage } from "./pages/verticals/RestaurantPosPage";
+import { RestaurantMenuPage } from "./pages/verticals/RestaurantMenuPage";
+import { RestaurantTablesPage } from "./pages/verticals/RestaurantTablesPage";
+import { RestaurantKitchenPage } from "./pages/verticals/RestaurantKitchenPage";
+import { ClinicDashboardPage } from "./pages/verticals/ClinicDashboardPage";
+import { ClinicPatientsPage } from "./pages/verticals/ClinicPatientsPage";
+import { ClinicPatientDetailPage } from "./pages/verticals/ClinicPatientDetailPage";
+import { ClinicAppointmentsPage } from "./pages/verticals/ClinicAppointmentsPage";
+import { ClinicVisitPage } from "./pages/verticals/ClinicVisitPage";
+import { RetailDashboardPage } from "./pages/verticals/RetailDashboardPage";
+import { RetailPosPage } from "./pages/verticals/RetailPosPage";
+import { RetailInventoryPage } from "./pages/verticals/RetailInventoryPage";
+import { RetailLoyaltyPage } from "./pages/verticals/RetailLoyaltyPage";
+import { RetailEndOfDayPage } from "./pages/verticals/RetailEndOfDayPage";
 import { Approvals } from "./pages/Approvals";
 import { ApprovalDetail } from "./pages/ApprovalDetail";
 import { Costs } from "./pages/Costs";
@@ -207,6 +226,20 @@ function boardRoutes() {
       <Route path="business/banking" element={<BusinessBankingPage />} />
       <Route path="business/audit" element={<BusinessAuditLogPage />} />
       <Route path="business/roles" element={<BusinessRolesPermissionsPage />} />
+      <Route path="business/salon" element={<SalonDashboardPage />} />
+      <Route path="business/salon/appointments" element={<SalonAppointmentsPage />} />
+      <Route path="business/salon/services" element={<SalonServicesPage />} />
+      <Route path="business/salon/staff" element={<SalonStaffPage />} />
+      <Route path="business/restaurant" element={<RestaurantDashboardPage />} />
+      <Route path="business/restaurant/pos" element={<RestaurantPosPage />} />
+      <Route path="business/restaurant/menu" element={<RestaurantMenuPage />} />
+      <Route path="business/restaurant/tables" element={<RestaurantTablesPage />} />
+      <Route path="business/restaurant/kitchen" element={<RestaurantKitchenPage />} />
+      <Route path="business/clinic" element={<ClinicDashboardPage />} />
+      <Route path="business/clinic/patients" element={<ClinicPatientsPage />} />
+      <Route path="business/clinic/patients/:id" element={<ClinicPatientDetailPage />} />
+      <Route path="business/clinic/appointments" element={<ClinicAppointmentsPage />} />
+      <Route path="business/clinic/visits/:id" element={<ClinicVisitPage />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
