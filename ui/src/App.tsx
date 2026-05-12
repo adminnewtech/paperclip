@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Layout } from "./components/Layout";
 import { OnboardingWizard } from "./components/OnboardingWizard";
 import { CloudAccessGate } from "./components/CloudAccessGate";
+import { OfflineIndicator } from "./components/OfflineIndicator";
+import { PwaInstallBanner } from "./components/PwaInstallBanner";
 import { Dashboard } from "./pages/Dashboard";
 import { DashboardLive } from "./pages/DashboardLive";
 import { Companies } from "./pages/Companies";
@@ -320,6 +322,21 @@ function NoCompaniesStartPage() {
   );
 }
 
+/**
+ * Wraps the CloudAccessGate so that authenticated/auth-gated routes also get
+ * the PWA offline indicator + install prompt without leaking those into the
+ * public auth/storefront/invite routes.
+ */
+function AuthGatedShell() {
+  return (
+    <>
+      <OfflineIndicator />
+      <PwaInstallBanner />
+      <CloudAccessGate />
+    </>
+  );
+}
+
 export function App() {
   return (
     <>
@@ -346,7 +363,7 @@ export function App() {
           <Route path="account" element={<StorefrontAccountPage />} />
         </Route>
 
-        <Route element={<CloudAccessGate />}>
+        <Route element={<AuthGatedShell />}>
           <Route index element={<CompanyRootRedirect />} />
           <Route path="onboarding" element={<OnboardingRoutePage />} />
           <Route path="instance" element={<Navigate to="/instance/settings/general" replace />} />

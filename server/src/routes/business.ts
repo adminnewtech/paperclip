@@ -15,6 +15,11 @@ import { validate } from "../middleware/validate.js";
 import { assertCompanyAccess, getActorInfo } from "./authz.js";
 import { logActivity } from "../services/index.js";
 import type { BusinessStreamService } from "../services/business-stream-service.js";
+import {
+  computeEntityDiff,
+  type BusinessAuditService,
+} from "../services/business-audit-service.js";
+import { logger } from "../middleware/logger.js";
 
 // ---------------------------------------------------------------------------
 // Validation schemas
@@ -223,8 +228,19 @@ async function seedChartOfAccounts(
 // Router
 // ---------------------------------------------------------------------------
 
-export function businessRoutes(db: Db, streamService?: BusinessStreamService) {
+export function businessRoutes(
+  db: Db,
+  streamService?: BusinessStreamService,
+  auditService?: BusinessAuditService,
+) {
   const router = Router();
+
+  function audit(entry: Parameters<BusinessAuditService["log"]>[0]) {
+    if (!auditService) return;
+    auditService.log(entry).catch((err) => {
+      logger.warn({ err }, "business audit log failed");
+    });
+  }
 
   // ---------- Catalog (static; no DB) ----------
   router.get("/business/catalog", async (_req, res) => {
@@ -588,6 +604,24 @@ export function businessRoutes(db: Db, streamService?: BusinessStreamService) {
           entity: row as never,
         });
         streamService?.emit({ kind: "summary.changed", companyId });
+        audit({
+          companyId,
+          actorUserId: actor.actorType === "user" ? actor.actorId : undefined,
+          actorAgentId: actor.agentId ?? undefined,
+          actorType: actor.actorType === "agent" ? "agent" : "user",
+          action: "create",
+          targetType: "businessEntity",
+          targetId: row.id,
+          targetCode: row.code ?? undefined,
+          moduleKey,
+          entityType,
+          ipAddress: req.ip,
+          userAgent: req.get("user-agent"),
+          diff: {
+            after: row as unknown as Record<string, unknown>,
+            changedFields: ["*"],
+          },
+        });
       }
 
       res.status(201).json(row);

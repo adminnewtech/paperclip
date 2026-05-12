@@ -1013,6 +1013,22 @@ export {
   type ListPluginState,
 } from "./validators/index.js";
 
+export {
+  IMPORT_SOURCES,
+  IMPORT_TARGET_TYPES,
+  IMPORT_TEMPLATES,
+  detectTemplate,
+  getImportTemplate,
+  isImportSource,
+  isImportTargetType,
+  suggestMapping,
+} from "./import-templates.js";
+export type {
+  ImportFieldMapping,
+  ImportSource,
+  ImportTargetType,
+  ImportTransform,
+} from "./import-templates.js";
 export { API_PREFIX, API } from "./api.js";
 export { normalizeAgentUrlKey, deriveAgentUrlKey, isUuidLike } from "./agent-url-key.js";
 export { deriveProjectUrlKey, normalizeProjectUrlKey, hasNonAsciiContent } from "./project-url-key.js";
@@ -1113,6 +1129,21 @@ export type {
   BusinessEntityType,
   IndustryPreset,
 } from "./business-modules.js";
+
+export {
+  BUSINESS_ROLES,
+  BUSINESS_MODULE_KEYS_FOR_PERMS,
+  ROLE_PRESETS,
+  ROLE_LABELS,
+  ROLE_DESCRIPTIONS,
+  getRolePreset,
+  clonePermissionSet,
+} from "./business-permissions.js";
+export type {
+  BusinessRole,
+  ModulePermissions,
+  PermissionSet,
+} from "./business-permissions.js";
 
 export {
   BUSINESS_AGENTS,

@@ -17,15 +17,21 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { initPluginBridge } from "./plugins/bridge-init";
 import { PluginLauncherProvider } from "./plugins/launchers";
+import { registerServiceWorker } from "./lib/pwa";
 import "@mdxeditor/editor/style.css";
 import "./index.css";
 
 initPluginBridge(React, ReactDOM);
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
+// Only register the service worker in production builds. In dev the SW
+// would interfere with Vite's HMR. Failures are swallowed inside
+// `registerServiceWorker` so they never crash the app.
+if (import.meta.env.PROD) {
+  if (typeof window !== "undefined") {
+    window.addEventListener("load", () => {
+      void registerServiceWorker();
+    });
+  }
 }
 
 const queryClient = new QueryClient({
