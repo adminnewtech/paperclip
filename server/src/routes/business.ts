@@ -20,6 +20,7 @@ import {
   type BusinessAuditService,
 } from "../services/business-audit-service.js";
 import { logger } from "../middleware/logger.js";
+import type { AutoPostingService } from "../services/accounting/auto-posting-service.js";
 
 // ---------------------------------------------------------------------------
 // Validation schemas
@@ -232,6 +233,7 @@ export function businessRoutes(
   db: Db,
   streamService?: BusinessStreamService,
   auditService?: BusinessAuditService,
+  autoPosting?: AutoPostingService,
 ) {
   const router = Router();
 
@@ -240,6 +242,66 @@ export function businessRoutes(
     auditService.log(entry).catch((err) => {
       logger.warn({ err }, "business audit log failed");
     });
+  }
+
+  function maybeAutoPostCreate(
+    companyId: string,
+    moduleKey: string,
+    entityType: string,
+    entityId: string,
+  ) {
+    if (!autoPosting) return;
+    autoPosting
+      .onEntityCreated(companyId, moduleKey, entityType, entityId)
+      .catch((err) => {
+        logger.warn(
+          { err, moduleKey, entityType, entityId },
+          "auto-posting onEntityCreated failed",
+        );
+      });
+  }
+
+  function maybeAutoPostUpdate(
+    companyId: string,
+    moduleKey: string,
+    entityType: string,
+    entityId: string,
+    previousStatus: string | null,
+    newStatus: string | null,
+  ) {
+    if (!autoPosting) return;
+    autoPosting
+      .onEntityUpdated(
+        companyId,
+        moduleKey,
+        entityType,
+        entityId,
+        previousStatus,
+        newStatus,
+      )
+      .catch((err) => {
+        logger.warn(
+          { err, moduleKey, entityType, entityId },
+          "auto-posting onEntityUpdated failed",
+        );
+      });
+  }
+
+  function maybeAutoPostDelete(
+    companyId: string,
+    moduleKey: string,
+    entityType: string,
+    entityId: string,
+  ) {
+    if (!autoPosting) return;
+    autoPosting
+      .onEntityDeleted(companyId, moduleKey, entityType, entityId)
+      .catch((err) => {
+        logger.warn(
+          { err, moduleKey, entityType, entityId },
+          "auto-posting onEntityDeleted failed",
+        );
+      });
   }
 
   // ---------- Catalog (static; no DB) ----------
@@ -622,6 +684,9 @@ export function businessRoutes(
             changedFields: ["*"],
           },
         });
+        // Auto-post journal entries for accounting-relevant events.
+        // This is fire-and-forget — failures must not break entity creation.
+        maybeAutoPostCreate(companyId, moduleKey, entityType, row.id);
       }
 
       res.status(201).json(row);
@@ -644,6 +709,19 @@ export function businessRoutes(
       const actor = getActorInfo(req);
       const now = new Date();
       const body = req.body as Partial<z.infer<typeof entityUpsertSchema>>;
+
+      // Snapshot before the update so we can compute a diff for audit.
+      const [beforeRow] = await db
+        .select()
+        .from(businessEntities)
+        .where(
+          and(
+            eq(businessEntities.id, id),
+            eq(businessEntities.companyId, companyId),
+            eq(businessEntities.moduleKey, moduleKey),
+            eq(businessEntities.entityType, entityType),
+          ),
+        );
 
       const [row] = await db
         .update(businessEntities)
@@ -680,6 +758,32 @@ export function businessRoutes(
         entityType,
         entity: row as never,
       });
+      audit({
+        companyId,
+        actorUserId: actor.actorType === "user" ? actor.actorId : undefined,
+        actorAgentId: actor.agentId ?? undefined,
+        actorType: actor.actorType === "agent" ? "agent" : "user",
+        action: "update",
+        targetType: "businessEntity",
+        targetId: row.id,
+        targetCode: row.code ?? undefined,
+        moduleKey,
+        entityType,
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
+        diff: computeEntityDiff(
+          beforeRow as unknown as Record<string, unknown>,
+          row as unknown as Record<string, unknown>,
+        ),
+      });
+      maybeAutoPostUpdate(
+        companyId,
+        moduleKey,
+        entityType,
+        row.id,
+        beforeRow?.status ?? null,
+        row.status ?? null,
+      );
       res.json(row);
     },
   );
@@ -692,6 +796,7 @@ export function businessRoutes(
       const entityType = req.params.entityType as string;
       const id = req.params.id as string;
       assertCompanyAccess(req, companyId);
+      const actor = getActorInfo(req);
       const result = await db
         .delete(businessEntities)
         .where(
@@ -715,6 +820,26 @@ export function businessRoutes(
         entityId: id,
       });
       streamService?.emit({ kind: "summary.changed", companyId });
+      const deleted = result[0];
+      audit({
+        companyId,
+        actorUserId: actor.actorType === "user" ? actor.actorId : undefined,
+        actorAgentId: actor.agentId ?? undefined,
+        actorType: actor.actorType === "agent" ? "agent" : "user",
+        action: "delete",
+        targetType: "businessEntity",
+        targetId: id,
+        targetCode: deleted?.code ?? undefined,
+        moduleKey,
+        entityType,
+        ipAddress: req.ip,
+        userAgent: req.get("user-agent"),
+        diff: {
+          before: deleted as unknown as Record<string, unknown>,
+          changedFields: ["*"],
+        },
+      });
+      maybeAutoPostDelete(companyId, moduleKey, entityType, id);
       res.status(204).end();
     },
   );

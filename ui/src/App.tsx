@@ -29,6 +29,11 @@ import { BusinessSetup } from "./pages/BusinessSetup";
 import { BusinessModuleView } from "./pages/BusinessModuleView";
 import { BusinessDashboard } from "./pages/BusinessDashboard";
 import { BusinessFinancePage } from "./pages/BusinessFinancePage";
+import { BusinessAccountingPage } from "./pages/BusinessAccountingPage";
+import { BusinessChartOfAccountsPage } from "./pages/BusinessChartOfAccountsPage";
+import { BusinessJournalPage } from "./pages/BusinessJournalPage";
+import { BusinessLedgerPage } from "./pages/BusinessLedgerPage";
+import { BusinessFinancialStatementsPage } from "./pages/BusinessFinancialStatementsPage";
 import { BusinessSalesPage } from "./pages/BusinessSalesPage";
 import { BusinessAnalyticsPage } from "./pages/BusinessAnalyticsPage";
 import { BusinessHRPage } from "./pages/BusinessHRPage";
@@ -46,6 +51,9 @@ import { BusinessAnalystPage } from "./pages/BusinessAnalystPage";
 import { BusinessAgentsHirePage } from "./pages/BusinessAgentsHirePage";
 import { BusinessAgentDetailPage } from "./pages/BusinessAgentDetailPage";
 import { BusinessStorefrontBuilderPage } from "./pages/BusinessStorefrontBuilderPage";
+import { BusinessImportPage } from "./pages/BusinessImportPage";
+import { BusinessAuditLogPage } from "./pages/BusinessAuditLogPage";
+import { BusinessRolesPermissionsPage } from "./pages/BusinessRolesPermissionsPage";
 import { Approvals } from "./pages/Approvals";
 import { ApprovalDetail } from "./pages/ApprovalDetail";
 import { Costs } from "./pages/Costs";
@@ -156,6 +164,11 @@ function boardRoutes() {
       <Route path="business/analytics" element={<BusinessAnalyticsPage />} />
       <Route path="business/finance" element={<BusinessFinancePage />} />
       <Route path="business/finance/:tab" element={<BusinessFinancePage />} />
+      <Route path="business/accounting" element={<BusinessAccountingPage />} />
+      <Route path="business/accounting/coa" element={<BusinessChartOfAccountsPage />} />
+      <Route path="business/accounting/journal" element={<BusinessJournalPage />} />
+      <Route path="business/accounting/ledger" element={<BusinessLedgerPage />} />
+      <Route path="business/accounting/statements" element={<BusinessFinancialStatementsPage />} />
       <Route path="business/sales" element={<BusinessSalesPage />} />
       <Route path="business/sales/:tab" element={<BusinessSalesPage />} />
       <Route path="business/hr" element={<BusinessHRPage />} />
@@ -172,6 +185,7 @@ function boardRoutes() {
       <Route path="business/ecommerce" element={<BusinessEcommercePage />} />
       <Route path="business/ecommerce/:tab" element={<BusinessEcommercePage />} />
       <Route path="business/storefront-builder" element={<BusinessStorefrontBuilderPage />} />
+      <Route path="business/import" element={<BusinessImportPage />} />
       <Route path="business/brain" element={<BusinessBrainPage />} />
       <Route path="business/automations" element={<BusinessAutomationsPage />} />
       <Route path="business/analyst" element={<BusinessAnalystPage />} />
@@ -179,6 +193,8 @@ function boardRoutes() {
       <Route path="business/agents/:agentSlug" element={<BusinessAgentDetailPage />} />
       <Route path="business/messaging" element={<BusinessMessagingPage />} />
       <Route path="business/payments" element={<BusinessPaymentsPage />} />
+      <Route path="business/audit" element={<BusinessAuditLogPage />} />
+      <Route path="business/roles" element={<BusinessRolesPermissionsPage />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
@@ -407,6 +423,11 @@ export function App() {
           <Route path="business/analytics" element={<UnprefixedBoardRedirect />} />
           <Route path="business/finance" element={<UnprefixedBoardRedirect />} />
           <Route path="business/finance/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/coa" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/journal" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/ledger" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/statements" element={<UnprefixedBoardRedirect />} />
           <Route path="business/sales" element={<UnprefixedBoardRedirect />} />
           <Route path="business/sales/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="business/hr" element={<UnprefixedBoardRedirect />} />
@@ -421,10 +442,13 @@ export function App() {
           <Route path="business/marketing/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="business/ecommerce" element={<UnprefixedBoardRedirect />} />
           <Route path="business/ecommerce/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/import" element={<UnprefixedBoardRedirect />} />
           <Route path="business/brain" element={<UnprefixedBoardRedirect />} />
           <Route path="business/automations" element={<UnprefixedBoardRedirect />} />
           <Route path="business/messaging" element={<UnprefixedBoardRedirect />} />
           <Route path="business/payments" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/audit" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/roles" element={<UnprefixedBoardRedirect />} />
           <Route path="business/:moduleKey" element={<UnprefixedBoardRedirect />} />
           <Route path="business/:moduleKey/:tab" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId" element={<UnprefixedBoardRedirect />} />

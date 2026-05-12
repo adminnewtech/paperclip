@@ -353,22 +353,31 @@ export function createFinancialStatementsService(
         const close = closingAgg.byCode.get(a.code) ?? 0;
         const delta = close - open;
         if (delta === 0) continue;
-        if (a.type === "asset" && a.subtype !== "fixed_asset") {
+        if (a.type === "asset" && a.subtype === "fixed_asset") {
+          // Fixed asset movements are investing activities (e.g. purchase
+          // of equipment uses cash, sale provides cash).
+          investing.push({
+            description: `${a.name} (investing)`,
+            amountCents: -delta,
+          });
+        } else if (a.type === "asset") {
           // Increase in non-cash current assets uses cash → negative.
           operating.push({
             description: `Δ ${a.name}`,
             amountCents: -delta,
           });
-        } else if (a.type === "liability") {
-          // Increase in liability is a credit → flips sign. delta is debit-credit.
-          // For liabilities (credit-normal), increase = negative delta.
-          operating.push({
-            description: `Δ ${a.name}`,
+        } else if (a.type === "liability" && a.subtype === "loan") {
+          // Loan proceeds / repayments are financing activities.
+          financing.push({
+            description: `${a.name} (financing)`,
             amountCents: -delta,
           });
-        } else if (a.type === "asset" && a.subtype === "fixed_asset") {
-          investing.push({
-            description: `${a.name} (investing)`,
+        } else if (a.type === "liability") {
+          // Increase in liability is a credit → flips sign. delta is
+          // debit-credit. For liabilities (credit-normal), increase =
+          // negative delta.
+          operating.push({
+            description: `Δ ${a.name}`,
             amountCents: -delta,
           });
         } else if (a.type === "equity") {
@@ -378,11 +387,6 @@ export function createFinancialStatementsService(
               amountCents: -delta,
             });
           }
-        } else if (a.type === "liability" && a.subtype === "loan") {
-          financing.push({
-            description: `${a.name} (financing)`,
-            amountCents: -delta,
-          });
         }
       }
 

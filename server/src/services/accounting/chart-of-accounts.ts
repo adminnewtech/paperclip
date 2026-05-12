@@ -155,7 +155,11 @@ export interface ChartOfAccountsService {
   updateAccount(
     companyId: string,
     code: string,
-    patch: Partial<Omit<AccountSeed, "code">> & { isActive?: boolean; actorId?: string | null },
+    patch: Partial<Omit<AccountSeed, "code" | "parentCode">> & {
+      parentCode?: string | null;
+      isActive?: boolean;
+      actorId?: string | null;
+    },
   ): Promise<ChartOfAccount | null>;
   deleteAccount(companyId: string, code: string): Promise<boolean>;
   seedDefaults(

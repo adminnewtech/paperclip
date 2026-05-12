@@ -198,13 +198,29 @@ export function parseCsv(input: string): string[][] {
   return rows;
 }
 
+interface MinimalXlsx {
+  read(data: Buffer, opts: { type: "buffer" }): {
+    SheetNames: string[];
+    Sheets: Record<string, unknown>;
+  };
+  utils: {
+    sheet_to_json(
+      sheet: unknown,
+      opts: { header: 1; raw?: boolean; defval?: string },
+    ): unknown[][];
+  };
+}
+
 async function parseExcel(rawData: string): Promise<string[][]> {
   // We expect `rawData` to be a base64-encoded XLSX payload when the client
   // chose `fileFormat: "excel"`. The dynamic import keeps `xlsx` an
   // optional dependency: if it isn't installed we throw a friendly error.
-  let xlsx: typeof import("xlsx");
+  let xlsx: MinimalXlsx;
   try {
-    xlsx = (await import("xlsx")) as typeof import("xlsx");
+    // The dynamic import target is computed at runtime, so the bundler will
+    // not eagerly resolve it and TypeScript can't statically type-check it.
+    const moduleName = "xlsx";
+    xlsx = (await import(/* @vite-ignore */ moduleName)) as unknown as MinimalXlsx;
   } catch {
     throw new Error(
       "Excel support is not installed on this server. Please export the file to CSV and re-upload.",
@@ -216,7 +232,7 @@ async function parseExcel(rawData: string): Promise<string[][]> {
   if (!sheetName) return [];
   const sheet = workbook.Sheets[sheetName];
   if (!sheet) return [];
-  const rows = xlsx.utils.sheet_to_json<string[]>(sheet, { header: 1, raw: false, defval: "" });
+  const rows = xlsx.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: "" });
   return rows.map((r) => (Array.isArray(r) ? r.map((c) => String(c ?? "")) : []));
 }
 

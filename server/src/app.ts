@@ -31,6 +31,8 @@ import { sidebarPreferenceRoutes } from "./routes/sidebar-preferences.js";
 import { inboxDismissalRoutes } from "./routes/inbox-dismissals.js";
 import { businessRoutes } from "./routes/business.js";
 import { businessReportsRoutes } from "./routes/business-reports.js";
+import { businessAccountingRoutes } from "./routes/business-accounting.js";
+import { createAutoPostingService } from "./services/accounting/auto-posting-service.js";
 import { marketingAutomationRoutes } from "./routes/marketing-automation.js";
 import { businessAgentsRoutes } from "./routes/business-agents.js";
 import { storefrontBuilderRoutes } from "./routes/storefront-builder.js";
@@ -44,9 +46,15 @@ import { businessAutomationsRoutes } from "./routes/business-automations.js";
 import { businessAiRoutes } from "./routes/business-ai.js";
 import { businessSearchRoutes } from "./routes/business-search.js";
 import { businessExportsRoutes } from "./routes/business-exports.js";
+import { businessBulkRoutes } from "./routes/business-bulk.js";
+import { businessImportRoutes } from "./routes/business-import.js";
 import { businessStreamRoutes } from "./routes/business-stream.js";
 import { businessAttachmentsRoutes } from "./routes/business-attachments.js";
 import { createBusinessStreamService } from "./services/business-stream-service.js";
+import { createBusinessAuditService } from "./services/business-audit-service.js";
+import { createBusinessRbacService } from "./services/business-rbac-service.js";
+import { businessAuditRoutes } from "./routes/business-audit.js";
+import { businessRbacRoutes } from "./routes/business-rbac.js";
 import { instanceSettingsRoutes } from "./routes/instance-settings.js";
 import {
   instanceDatabaseBackupRoutes,
@@ -233,8 +241,21 @@ export async function createApp(
   api.use(sidebarPreferenceRoutes(db));
   api.use(inboxDismissalRoutes(db));
   const businessStreamService = createBusinessStreamService();
-  api.use(businessRoutes(db, businessStreamService));
+  const businessAuditService = createBusinessAuditService(db);
+  const businessRbacService = createBusinessRbacService(db);
+  const businessAutoPostingService = createAutoPostingService(db);
+  api.use(
+    businessRoutes(
+      db,
+      businessStreamService,
+      businessAuditService,
+      businessAutoPostingService,
+    ),
+  );
+  api.use(businessAuditRoutes(businessAuditService, businessRbacService));
+  api.use(businessRbacRoutes(businessRbacService, businessAuditService));
   api.use(businessReportsRoutes(db));
+  api.use(businessAccountingRoutes(db));
   api.use(marketingAutomationRoutes(db));
   api.use(businessAgentsRoutes(db));
   api.use(storefrontBuilderRoutes(db));
@@ -247,6 +268,8 @@ export async function createApp(
   api.use(businessAiRoutes(db));
   api.use(businessSearchRoutes(db));
   api.use(businessExportsRoutes(db));
+  api.use(businessBulkRoutes(db));
+  api.use(businessImportRoutes(db));
   api.use(businessStreamRoutes(db, businessStreamService));
   api.use(businessAttachmentsRoutes(db));
   api.use(instanceSettingsRoutes(db));

@@ -257,11 +257,11 @@ export function createBusinessAuditService(db: Db): BusinessAuditService {
           data: (r.data ?? {}) as Record<string, unknown>,
         }),
       );
-      const nextCursor = hasMore
-        ? typeof sliced[sliced.length - 1]!.createdAt === "string"
-          ? (sliced[sliced.length - 1]!.createdAt as string)
-          : (sliced[sliced.length - 1]!.createdAt as Date).toISOString()
-        : undefined;
+      let nextCursor: string | undefined;
+      if (hasMore) {
+        const last = sliced[sliced.length - 1]!.createdAt;
+        nextCursor = typeof last === "string" ? last : last.toISOString();
+      }
       return { entries, nextCursor };
     },
 

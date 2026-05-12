@@ -1115,6 +1115,27 @@ export type {
 } from "./environment-support.js";
 
 export {
+  isDebitNormal,
+  isCreditNormal,
+  validateJournalLines,
+} from "./accounting.js";
+export type {
+  AccountType,
+  AccountSubtype,
+  ChartOfAccount,
+  JournalEntryStatus,
+  JournalReferenceType,
+  JournalLine,
+  JournalEntry,
+  TrialBalanceRow,
+  StatementLine,
+  IncomeStatement,
+  BalanceSheet,
+  CashFlowLine,
+  CashFlowStatement,
+} from "./accounting.js";
+
+export {
   BUSINESS_MODULES,
   INDUSTRY_PRESETS,
   getBusinessModule,
