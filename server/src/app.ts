@@ -39,6 +39,7 @@ import { storefrontBuilderRoutes } from "./routes/storefront-builder.js";
 import { publicStorefrontRoutes } from "./routes/public-storefront.js";
 import { businessMessagingRoutes } from "./routes/business-messaging.js";
 import { businessPaymentsRoutes } from "./routes/business-payments.js";
+import { businessBankingRoutes } from "./routes/business-banking.js";
 import { businessFxRoutes } from "./routes/business-fx.js";
 import { businessAnalystRoutes } from "./routes/business-analyst.js";
 import { businessNlpRoutes } from "./routes/business-nlp.js";
@@ -261,6 +262,7 @@ export async function createApp(
   api.use(storefrontBuilderRoutes(db));
   api.use(businessMessagingRoutes(db));
   api.use(businessPaymentsRoutes(db));
+  api.use(businessBankingRoutes(db));
   api.use(businessFxRoutes(db));
   api.use(businessAnalystRoutes(db));
   api.use(businessNlpRoutes(db));

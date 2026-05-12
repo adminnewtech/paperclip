@@ -1225,3 +1225,12 @@ export type {
   GccCurrency,
   GccCurrencyInfo,
 } from "./gcc-locale.js";
+export {
+  GOSI_RATES_SAUDI,
+  GOSI_RATES_NON_SAUDI,
+  GOSI_SALARY_FLOOR_CENTS,
+  GOSI_SALARY_CEILING_CENTS,
+  clampGosiContributoryWageCents,
+  getGosiRates,
+} from "./gosi-rates.js";
+export type { GosiNationality, GosiRates } from "./gosi-rates.js";

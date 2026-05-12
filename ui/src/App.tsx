@@ -47,6 +47,7 @@ import { BusinessBrainPage } from "./pages/BusinessBrainPage";
 import { BusinessAutomationsPage } from "./pages/BusinessAutomationsPage";
 import { BusinessMessagingPage } from "./pages/BusinessMessagingPage";
 import { BusinessPaymentsPage } from "./pages/BusinessPaymentsPage";
+import { BusinessBankingPage } from "./pages/BusinessBankingPage";
 import { BusinessAnalystPage } from "./pages/BusinessAnalystPage";
 import { BusinessAgentsHirePage } from "./pages/BusinessAgentsHirePage";
 import { BusinessAgentDetailPage } from "./pages/BusinessAgentDetailPage";
@@ -193,6 +194,7 @@ function boardRoutes() {
       <Route path="business/agents/:agentSlug" element={<BusinessAgentDetailPage />} />
       <Route path="business/messaging" element={<BusinessMessagingPage />} />
       <Route path="business/payments" element={<BusinessPaymentsPage />} />
+      <Route path="business/banking" element={<BusinessBankingPage />} />
       <Route path="business/audit" element={<BusinessAuditLogPage />} />
       <Route path="business/roles" element={<BusinessRolesPermissionsPage />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
