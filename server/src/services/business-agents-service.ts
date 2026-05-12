@@ -24,6 +24,12 @@ import {
   type BusinessAgentSchedule,
 } from "@paperclipai/shared";
 import { createBusinessAiService } from "./business-ai-service.js";
+import {
+  createAgentMemoryService,
+  type AgentMemoryBias,
+  type AgentMemoryService,
+} from "./agent-memory/index.js";
+import { createFeedbackTracker } from "./agent-memory/feedback-tracker.js";
 
 // ---------------------------------------------------------------------------
 // Public types
@@ -52,6 +58,11 @@ export interface AgentRunAction {
   summaryAr?: string;
   entityRefs?: string[];
   severity: "info" | "action" | "warning";
+  /**
+   * IDs of agent_memory rows created for this action (one per recorded
+   * suggestion/output). Used by the UI to attach thumbs-up/down prompts.
+   */
+  memoryActionIds?: string[];
 }
 
 export interface AgentRunResult {
@@ -136,6 +147,69 @@ function scheduleForAgent(def: BusinessAgentDefinition): string {
 
 export function createBusinessAgentsService(db: Db): BusinessAgentsService {
   const aiService = createBusinessAiService(db);
+  const memoryService: AgentMemoryService = createAgentMemoryService(db);
+  const feedbackTracker = createFeedbackTracker(memoryService);
+
+  /**
+   * Best-effort: record one memory row per emitted run action so the UI can
+   * later prompt for thumbs-up / thumbs-down feedback. Failures are swallowed
+   * to avoid breaking the agent run.
+   */
+  async function recordActionsToMemory(
+    companyId: string,
+    agentSlug: string,
+    runId: string,
+    actions: AgentRunAction[],
+  ): Promise<void> {
+    for (const a of actions) {
+      try {
+        const targets = a.entityRefs && a.entityRefs.length > 0 ? a.entityRefs : [undefined];
+        const ids: string[] = [];
+        for (const targetId of targets) {
+          const recorded = await feedbackTracker.record(companyId, {
+            companyId,
+            agentSlug,
+            capability: a.capability,
+            runId,
+            description: a.summary,
+            descriptionAr: a.summaryAr,
+            targetEntityId: targetId,
+            parameters: {
+              severity: a.severity,
+              entityRefCount: a.entityRefs?.length ?? 0,
+            },
+          });
+          if (recorded) ids.push(recorded.id);
+        }
+        if (ids.length > 0) a.memoryActionIds = ids;
+      } catch {
+        // best-effort
+      }
+    }
+  }
+
+  /**
+   * Best-effort: fetch current biases and return the set of capabilities that
+   * should be suppressed for this run.
+   */
+  async function getSuppressedCapabilities(
+    companyId: string,
+    agentSlug: string,
+  ): Promise<Set<string>> {
+    try {
+      const biases: AgentMemoryBias[] = await memoryService.getBiases(
+        companyId,
+        agentSlug,
+      );
+      const suppressed = new Set<string>();
+      for (const b of biases) {
+        if (b.rule === "suppress") suppressed.add(b.capability);
+      }
+      return suppressed;
+    } catch {
+      return new Set<string>();
+    }
+  }
 
   // -------------------------------------------------------------------------
   // Persistence helpers
@@ -1833,14 +1907,30 @@ export function createBusinessAgentsService(db: Db): BusinessAgentsService {
         ? hired.enabledCapabilities
         : def.capabilities.map((c) => c.key);
 
+    // Memory-driven biases: skip capabilities that historically perform poorly.
+    const suppressed = await getSuppressedCapabilities(companyId, agentSlug);
+
+    const runIdPlaceholder = `${agentSlug}-${startedAt.toISOString()}`;
     for (const capKey of capsToRun) {
       const runner = CAPABILITY_REGISTRY[capKey];
       if (!runner) {
         errors.push(`Unknown capability: ${capKey}`);
         continue;
       }
+      if (suppressed.has(capKey)) {
+        actions.push({
+          capability: capKey,
+          summary: `Skipped — recent performance for this skill was below threshold.`,
+          summaryAr: `تم التخطي — أداء هذه المهارة مؤخراً كان دون المستوى.`,
+          severity: "info",
+        });
+        continue;
+      }
       try {
         const out = await runner(companyId, capKey);
+        // Best-effort: record each emitted action in agent memory so the UI
+        // can later prompt for feedback on the suggestion.
+        await recordActionsToMemory(companyId, agentSlug, runIdPlaceholder, out);
         actions.push(...out);
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);

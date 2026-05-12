@@ -35,6 +35,7 @@ import { businessAccountingRoutes } from "./routes/business-accounting.js";
 import { createAutoPostingService } from "./services/accounting/auto-posting-service.js";
 import { marketingAutomationRoutes } from "./routes/marketing-automation.js";
 import { businessAgentsRoutes } from "./routes/business-agents.js";
+import { businessAgentMemoryRoutes } from "./routes/business-agent-memory.js";
 import { storefrontBuilderRoutes } from "./routes/storefront-builder.js";
 import { publicStorefrontRoutes } from "./routes/public-storefront.js";
 import { businessMessagingRoutes } from "./routes/business-messaging.js";
@@ -42,9 +43,15 @@ import { businessPaymentsRoutes } from "./routes/business-payments.js";
 import { businessBankingRoutes } from "./routes/business-banking.js";
 import { businessFxRoutes } from "./routes/business-fx.js";
 import { businessAnalystRoutes } from "./routes/business-analyst.js";
+import { businessHealthRoutes } from "./routes/business-health.js";
+import { businessSimulationRoutes } from "./routes/business-simulation.js";
 import { businessNlpRoutes } from "./routes/business-nlp.js";
 import { businessAutomationsRoutes } from "./routes/business-automations.js";
 import { businessAiRoutes } from "./routes/business-ai.js";
+import { aiCofounderRoutes } from "./routes/ai-cofounder.js";
+import { startProactiveScheduler } from "./services/ai-cofounder/proactive-engine.js";
+import { registerCofounderForInbox } from "./services/whatsapp-inbox-service.js";
+import { businessRagRoutes } from "./routes/business-rag.js";
 import { businessSearchRoutes } from "./routes/business-search.js";
 import { businessExportsRoutes } from "./routes/business-exports.js";
 import { businessBulkRoutes } from "./routes/business-bulk.js";
@@ -259,15 +266,25 @@ export async function createApp(
   api.use(businessAccountingRoutes(db));
   api.use(marketingAutomationRoutes(db));
   api.use(businessAgentsRoutes(db));
+  api.use(businessAgentMemoryRoutes(db));
   api.use(storefrontBuilderRoutes(db));
   api.use(businessMessagingRoutes(db));
   api.use(businessPaymentsRoutes(db));
   api.use(businessBankingRoutes(db));
   api.use(businessFxRoutes(db));
   api.use(businessAnalystRoutes(db));
+  api.use(businessHealthRoutes(db));
+  api.use(businessSimulationRoutes(db));
   api.use(businessNlpRoutes(db));
   api.use(businessAutomationsRoutes(db));
   api.use(businessAiRoutes(db));
+  const cofounder = aiCofounderRoutes(db);
+  api.use(cofounder.router);
+  // Route inbound WhatsApp messages from registered owner phones to the
+  // Co-Founder rather than the default customer/ticket flow.
+  registerCofounderForInbox(cofounder.service);
+  const proactive = startProactiveScheduler(cofounder.service);
+  api.use(businessRagRoutes(db));
   api.use(businessSearchRoutes(db));
   api.use(businessExportsRoutes(db));
   api.use(businessBulkRoutes(db));
@@ -506,6 +523,7 @@ export async function createApp(
     viteHtmlRenderer?.dispose();
     hostServiceCleanup.disposeAll();
     hostServiceCleanup.teardown();
+    proactive.stop();
   });
   process.once("beforeExit", () => {
     void flushPluginLogBuffer();

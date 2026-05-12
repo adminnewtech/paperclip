@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   ArrowLeft,
   Bot,
+  Brain,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
@@ -364,6 +365,13 @@ export function BusinessAgentDetailPage() {
             {isRtl ? "استئناف" : "Resume"}
           </Button>
         )}
+        <Button
+          variant="outline"
+          onClick={() => navigate(`/business/agents/${slug}/memory`)}
+        >
+          <Brain className="mr-2 h-4 w-4" />
+          {isRtl ? "الذاكرة" : "Memory"}
+        </Button>
         <Button
           variant="outline"
           onClick={() => {

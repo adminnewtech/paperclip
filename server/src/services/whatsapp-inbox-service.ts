@@ -43,6 +43,38 @@ import type {
 import { getWhatsappCloudService } from "./whatsapp-cloud-service.js";
 import type { BusinessStreamService } from "./business-stream-service.js";
 
+// Co-Founder hook — set at app-bootstrap time. We import a *type* only to
+// avoid a circular runtime dependency; the inbox service treats this as an
+// opaque message handler.
+export interface CofounderInboxHook {
+  isOwnerPhone(companyId: string, userPhone: string): Promise<boolean>;
+  resolveCompanyForOwnerPhone(userPhone: string): Promise<string | null>;
+  handleMessage(
+    companyId: string,
+    userPhone: string,
+    text: string,
+    opts?: { lang?: "ar" | "en" },
+  ): Promise<{ reply: string; language: "ar" | "en" }>;
+}
+
+let globalCofounderHook: CofounderInboxHook | null = null;
+
+/**
+ * Wire the AI Co-Founder service to the inbox. Subsequent inbound WhatsApp
+ * messages from a registered owner phone will be routed to the Co-Founder
+ * and its reply sent back over WhatsApp, in place of the default
+ * customer/ticket flow.
+ *
+ * Safe to call multiple times — the latest hook wins.
+ */
+export function registerCofounderForInbox(hook: CofounderInboxHook | null): void {
+  globalCofounderHook = hook;
+}
+
+export function getRegisteredCofounderHook(): CofounderInboxHook | null {
+  return globalCofounderHook;
+}
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -159,6 +191,7 @@ export function createWhatsappInboxService(
   opts: {
     streamService?: BusinessStreamService;
     cloudService?: WhatsappCloudService;
+    cofounderService?: CofounderInboxHook;
   } = {},
 ): WhatsappInboxService {
   const streamService = opts.streamService;
@@ -396,6 +429,40 @@ export function createWhatsappInboxService(
       };
     }
     const phone = msg.from;
+
+    // --- Co-Founder routing ---------------------------------------------
+    // If the sender is a registered owner phone for this company, route the
+    // message to the AI Co-Founder and respond over WhatsApp. This happens
+    // BEFORE we create a contact / conversation row so that owner chats
+    // don't pollute the customer inbox.
+    const cofounder = opts.cofounderService ?? getRegisteredCofounderHook();
+    if (cofounder && phone) {
+      try {
+        const isOwner = await cofounder.isOwnerPhone(companyId, phone);
+        if (isOwner) {
+          const text = extractTextBody(msg);
+          const result = await cofounder.handleMessage(companyId, phone, text);
+          if (cloud.isConfigured()) {
+            try {
+              await cloud.sendText(phone, result.reply);
+            } catch (err) {
+              // eslint-disable-next-line no-console
+              console.warn("[whatsapp-inbox] cofounder reply send failed", err);
+            }
+          }
+          return {
+            messageId: msg.id,
+            conversationId: "",
+            companyId,
+          };
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.warn("[whatsapp-inbox] cofounder routing error", err);
+        // fall through to normal customer flow
+      }
+    }
+
     const contact = await findOrCreateContact(companyId, phone);
     const conv = await findOrCreateConversation(
       companyId,

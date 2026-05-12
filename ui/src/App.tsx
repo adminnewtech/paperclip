@@ -44,13 +44,18 @@ import { BusinessMarketingPage } from "./pages/BusinessMarketingPage";
 import { BusinessMarketingFlowsPage } from "./pages/BusinessMarketingFlowsPage";
 import { BusinessEcommercePage } from "./pages/BusinessEcommercePage";
 import { BusinessBrainPage } from "./pages/BusinessBrainPage";
+import { BusinessKnowledgePage } from "./pages/BusinessKnowledgePage";
 import { BusinessAutomationsPage } from "./pages/BusinessAutomationsPage";
 import { BusinessMessagingPage } from "./pages/BusinessMessagingPage";
 import { BusinessPaymentsPage } from "./pages/BusinessPaymentsPage";
 import { BusinessBankingPage } from "./pages/BusinessBankingPage";
 import { BusinessAnalystPage } from "./pages/BusinessAnalystPage";
+import { BusinessAiCofounderPage } from "./pages/BusinessAiCofounderPage";
+import { BusinessHealthPage } from "./pages/BusinessHealthPage";
+import { BusinessSimulationPage } from "./pages/BusinessSimulationPage";
 import { BusinessAgentsHirePage } from "./pages/BusinessAgentsHirePage";
 import { BusinessAgentDetailPage } from "./pages/BusinessAgentDetailPage";
+import { BusinessAgentMemoryPage } from "./pages/BusinessAgentMemoryPage";
 import { BusinessStorefrontBuilderPage } from "./pages/BusinessStorefrontBuilderPage";
 import { BusinessImportPage } from "./pages/BusinessImportPage";
 import { BusinessAuditLogPage } from "./pages/BusinessAuditLogPage";
@@ -188,10 +193,15 @@ function boardRoutes() {
       <Route path="business/storefront-builder" element={<BusinessStorefrontBuilderPage />} />
       <Route path="business/import" element={<BusinessImportPage />} />
       <Route path="business/brain" element={<BusinessBrainPage />} />
+      <Route path="business/knowledge" element={<BusinessKnowledgePage />} />
       <Route path="business/automations" element={<BusinessAutomationsPage />} />
       <Route path="business/analyst" element={<BusinessAnalystPage />} />
+      <Route path="business/cofounder" element={<BusinessAiCofounderPage />} />
+      <Route path="business/health" element={<BusinessHealthPage />} />
+      <Route path="business/simulation" element={<BusinessSimulationPage />} />
       <Route path="business/agents/hire" element={<BusinessAgentsHirePage />} />
       <Route path="business/agents/:agentSlug" element={<BusinessAgentDetailPage />} />
+      <Route path="business/agents/:agentSlug/memory" element={<BusinessAgentMemoryPage />} />
       <Route path="business/messaging" element={<BusinessMessagingPage />} />
       <Route path="business/payments" element={<BusinessPaymentsPage />} />
       <Route path="business/banking" element={<BusinessBankingPage />} />
