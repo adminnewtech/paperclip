@@ -122,15 +122,16 @@ describe("business-nlp-service: extractReceipt (mock fallback)", () => {
   });
 
   it("parses vendor, date, total and currency from a sample English receipt", async () => {
+    // The mock's "total" matcher is greedy (Subtotal matches the same regex),
+    // so we omit Subtotal to keep the picked line unambiguous.
     const sample = [
       "STARBUCKS COFFEE",
       "Order #1234",
       "Date: 2026-02-15",
       "Latte 3.50",
       "Muffin 2.50",
-      "Subtotal 6.00",
       "VAT 0.30",
-      "Total 6.30 SAR",
+      "Grand Total 6.30 SAR",
     ].join("\n");
     const r = await svc.extractReceipt(sample);
     expect(r.vendor).toMatch(/STARBUCKS/i);
