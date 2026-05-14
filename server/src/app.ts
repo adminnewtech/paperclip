@@ -29,6 +29,53 @@ import { userProfileRoutes } from "./routes/user-profiles.js";
 import { sidebarBadgeRoutes } from "./routes/sidebar-badges.js";
 import { sidebarPreferenceRoutes } from "./routes/sidebar-preferences.js";
 import { inboxDismissalRoutes } from "./routes/inbox-dismissals.js";
+import { businessRoutes } from "./routes/business.js";
+import { salonsRoutes } from "./routes/verticals/salons.js";
+import { businessReportsRoutes } from "./routes/business-reports.js";
+import { businessAccountingRoutes } from "./routes/business-accounting.js";
+import { createAutoPostingService } from "./services/accounting/auto-posting-service.js";
+import { marketingAutomationRoutes } from "./routes/marketing-automation.js";
+import { businessAgentsRoutes } from "./routes/business-agents.js";
+import { businessAgentMemoryRoutes } from "./routes/business-agent-memory.js";
+import { storefrontBuilderRoutes } from "./routes/storefront-builder.js";
+import { publicStorefrontRoutes } from "./routes/public-storefront.js";
+import { businessMessagingRoutes } from "./routes/business-messaging.js";
+import { businessPaymentsRoutes } from "./routes/business-payments.js";
+import { businessBankingRoutes } from "./routes/business-banking.js";
+import { businessFxRoutes } from "./routes/business-fx.js";
+import { businessAnalystRoutes } from "./routes/business-analyst.js";
+import { businessHealthRoutes } from "./routes/business-health.js";
+import { businessSimulationRoutes } from "./routes/business-simulation.js";
+import { businessNlpRoutes } from "./routes/business-nlp.js";
+import { businessAutomationsRoutes } from "./routes/business-automations.js";
+import { businessAiRoutes } from "./routes/business-ai.js";
+import { aiCofounderRoutes } from "./routes/ai-cofounder.js";
+import { startProactiveScheduler } from "./services/ai-cofounder/proactive-engine.js";
+import { registerCofounderForInbox } from "./services/whatsapp-inbox-service.js";
+import { businessRagRoutes } from "./routes/business-rag.js";
+import { businessSearchRoutes } from "./routes/business-search.js";
+import { businessExportsRoutes } from "./routes/business-exports.js";
+import { businessBulkRoutes } from "./routes/business-bulk.js";
+import { businessImportRoutes } from "./routes/business-import.js";
+import { businessStreamRoutes } from "./routes/business-stream.js";
+import { businessAttachmentsRoutes } from "./routes/business-attachments.js";
+import { hermesRoutes, hermesWebhookRoutes } from "./routes/hermes.js";
+import { workspaceSearchRoutes } from "./routes/workspace-search.js";
+import { workspaceAiRoutes } from "./routes/workspace-ai.js";
+import { workspaceCommandsRoutes } from "./routes/workspace-commands.js";
+import { createAiMembersService } from "./services/workspace/ai-members-service.js";
+import { createEventBridgeService } from "./services/workspace/event-bridge-service.js";
+import { createAgentResponseService } from "./services/workspace/agent-response-service.js";
+import { workspaceRoutes } from "./routes/workspace.js";
+import { createWorkspaceService } from "./services/workspace/index.js";
+import { clinicsRoutes } from "./routes/verticals/clinics.js";
+import { restaurantsRoutes } from "./routes/verticals/restaurants.js";
+import { retailRoutes } from "./routes/verticals/retail.js";
+import { createBusinessStreamService } from "./services/business-stream-service.js";
+import { createBusinessAuditService } from "./services/business-audit-service.js";
+import { createBusinessRbacService } from "./services/business-rbac-service.js";
+import { businessAuditRoutes } from "./routes/business-audit.js";
+import { businessRbacRoutes } from "./routes/business-rbac.js";
 import { instanceSettingsRoutes } from "./routes/instance-settings.js";
 import {
   instanceDatabaseBackupRoutes,
@@ -170,6 +217,12 @@ export async function createApp(
   if (opts.betterAuthHandler) {
     app.all("/api/auth/{*authPath}", opts.betterAuthHandler);
   }
+  // Public, unauthenticated storefront API. Mounted BEFORE the company-scoped
+  // /api router so that the boardMutationGuard / company access checks do not
+  // apply to anonymous customers visiting a /shop/:slug page.
+  app.use("/api/public", publicStorefrontRoutes(db));
+  // Hermes webhook receiver — signature-validated, no auth.
+  app.use("/api/public/webhooks/hermes", hermesWebhookRoutes(db));
   app.use(llmRoutes(db));
 
   const hostServicesDisposers = new Map<string, () => void>();
@@ -210,6 +263,121 @@ export async function createApp(
   api.use(sidebarBadgeRoutes(db));
   api.use(sidebarPreferenceRoutes(db));
   api.use(inboxDismissalRoutes(db));
+  const businessStreamService = createBusinessStreamService();
+  const businessAuditService = createBusinessAuditService(db);
+  const businessRbacService = createBusinessRbacService(db);
+  const businessAutoPostingService = createAutoPostingService(db);
+  api.use(
+    businessRoutes(
+      db,
+      businessStreamService,
+      businessAuditService,
+      businessAutoPostingService,
+    ),
+  );
+  api.use(businessAuditRoutes(businessAuditService, businessRbacService));
+  api.use(businessRbacRoutes(businessRbacService, businessAuditService));
+  api.use(businessReportsRoutes(db));
+  // ---- Phase 11-A: Workspace Core (channels, messages, members, stream) --
+  // The WorkspaceService is the canonical home for Slack-like collaboration
+  // surfaces. Sub-services are aggregated by `createWorkspaceService` and
+  // exposed under `/api/companies/:companyId/workspace/*`.
+  const workspaceService = createWorkspaceService(db, {
+    businessStreamService,
+  });
+  api.use(workspaceRoutes(db, workspaceService));
+  api.use(businessAccountingRoutes(db));
+  api.use(marketingAutomationRoutes(db));
+  api.use(businessAgentsRoutes(db));
+  api.use(businessAgentMemoryRoutes(db));
+  api.use(storefrontBuilderRoutes(db));
+  api.use(businessMessagingRoutes(db));
+  api.use(salonsRoutes(db));
+  api.use(businessPaymentsRoutes(db));
+  api.use(businessBankingRoutes(db));
+  api.use(businessFxRoutes(db));
+  api.use(businessAnalystRoutes(db));
+  api.use(businessHealthRoutes(db));
+  api.use(businessSimulationRoutes(db));
+  api.use(businessNlpRoutes(db));
+  api.use(businessAutomationsRoutes(db));
+  api.use(businessAiRoutes(db));
+  const cofounder = aiCofounderRoutes(db);
+  api.use(cofounder.router);
+  // Route inbound WhatsApp messages from registered owner phones to the
+  // Co-Founder rather than the default customer/ticket flow.
+  registerCofounderForInbox(cofounder.service);
+  const proactive = startProactiveScheduler(cofounder.service);
+  api.use(businessRagRoutes(db));
+  api.use(businessSearchRoutes(db));
+  api.use(businessExportsRoutes(db));
+  api.use(businessBulkRoutes(db));
+  api.use(businessImportRoutes(db));
+  api.use(businessStreamRoutes(db, businessStreamService));
+  api.use(businessAttachmentsRoutes(db));
+  api.use(hermesRoutes(db));
+  api.use(workspaceSearchRoutes(db));
+
+  // ---- Phase 11-B: workspace AI members + event bridge ------------------
+  // The workspace core (P11-A) provides the canonical channel/member/message
+  // services. Until those are wired here, the AI members service runs in
+  // no-op mode (status updates + posts are logged and skipped). When P11-A
+  // lands, app.ts will call:
+  //   workspaceAiMembersService.__setRegistrar(...)
+  //   workspaceAiMembersService.__setPoster(...)
+  //   workspaceEventBridgeService.__setPoster(...)
+  // and everything will start broadcasting.
+  const workspaceAiMembersService = createAiMembersService(db);
+  const workspaceEventBridgeService = createEventBridgeService(db);
+  const workspaceAgentResponseService = createAgentResponseService(
+    db,
+    workspaceAiMembersService,
+  );
+  api.use(
+    workspaceAiRoutes(db, {
+      aiMembersService: workspaceAiMembersService,
+      eventBridgeService: workspaceEventBridgeService,
+      agentResponseService: workspaceAgentResponseService,
+    }),
+  );
+  api.use(workspaceCommandsRoutes(db));
+
+  // Bridge: business stream events → workspace channel messages.
+  // The bridge subscribes per-company on demand; we attach a global
+  // listener that routes every emitted event through the translator.
+  // (Once P11-A is wired and per-company channels exist, this will start
+  // posting; until then the bridge logs + records to event_log only.)
+  const workspaceEventBridgeBindings = new Map<string, () => void>();
+  function ensureWorkspaceEventBridgeBinding(companyId: string): void {
+    if (workspaceEventBridgeBindings.has(companyId)) return;
+    const unsubscribe = workspaceEventBridgeService.bindToBusinessStream(
+      companyId,
+      businessStreamService,
+    );
+    workspaceEventBridgeBindings.set(companyId, unsubscribe);
+  }
+  // Per-company bridge subscriptions are created on demand via
+  // `ensureWorkspaceEventBridgeBinding`. Downstream services (e.g. P11-A's
+  // channel-init helper or company onboarding) should call this once they
+  // know which companies need bridged events.
+
+  // Best-effort: expose the binding helper for downstream wiring. Tests and
+  // higher-level services can call ensureWorkspaceEventBridgeBinding(id) to
+  // begin bridging events for a specific company.
+  (app as unknown as {
+    workspaceEventBridge?: {
+      ensureBinding: (companyId: string) => void;
+      service: typeof workspaceEventBridgeService;
+      members: typeof workspaceAiMembersService;
+    };
+  }).workspaceEventBridge = {
+    ensureBinding: ensureWorkspaceEventBridgeBinding,
+    service: workspaceEventBridgeService,
+    members: workspaceAiMembersService,
+  };
+  api.use(clinicsRoutes(db));
+  api.use(restaurantsRoutes(db));
+  api.use(retailRoutes(db));
   api.use(instanceSettingsRoutes(db));
   if (opts.databaseBackupService) {
     api.use(instanceDatabaseBackupRoutes(opts.databaseBackupService));
@@ -442,6 +610,7 @@ export async function createApp(
     viteHtmlRenderer?.dispose();
     hostServiceCleanup.disposeAll();
     hostServiceCleanup.teardown();
+    proactive.stop();
   });
   process.once("beforeExit", () => {
     void flushPluginLogBuffer();

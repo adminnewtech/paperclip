@@ -1,0 +1,8 @@
+# Icons directory
+# TODO: Generate real PWA icons (sizes referenced in /manifest.webmanifest):
+#   icon-72.png, icon-96.png, icon-128.png, icon-144.png, icon-152.png,
+#   icon-192.png, icon-384.png, icon-512.png,
+#   icon-maskable-192.png, icon-maskable-512.png,
+#   badge-72.png,
+#   shortcut-dashboard.png, shortcut-business.png, shortcut-invoice.png, shortcut-ai.png.
+# These should be generated from the Paperclip brand mark as a follow-up.

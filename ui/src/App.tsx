@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Layout } from "./components/Layout";
 import { OnboardingWizard } from "./components/OnboardingWizard";
 import { CloudAccessGate } from "./components/CloudAccessGate";
+import { OfflineIndicator } from "./components/OfflineIndicator";
+import { PwaInstallBanner } from "./components/PwaInstallBanner";
 import { Dashboard } from "./pages/Dashboard";
 import { DashboardLive } from "./pages/DashboardLive";
 import { Companies } from "./pages/Companies";
@@ -22,6 +24,63 @@ import { UserProfile } from "./pages/UserProfile";
 import { ExecutionWorkspaceDetail } from "./pages/ExecutionWorkspaceDetail";
 import { Goals } from "./pages/Goals";
 import { GoalDetail } from "./pages/GoalDetail";
+import { Business } from "./pages/Business";
+import { BusinessSetup } from "./pages/BusinessSetup";
+import { BusinessModuleView } from "./pages/BusinessModuleView";
+import { BusinessDashboard } from "./pages/BusinessDashboard";
+import { BusinessFinancePage } from "./pages/BusinessFinancePage";
+import { BusinessAccountingPage } from "./pages/BusinessAccountingPage";
+import { BusinessChartOfAccountsPage } from "./pages/BusinessChartOfAccountsPage";
+import { BusinessJournalPage } from "./pages/BusinessJournalPage";
+import { BusinessLedgerPage } from "./pages/BusinessLedgerPage";
+import { BusinessFinancialStatementsPage } from "./pages/BusinessFinancialStatementsPage";
+import { BusinessSalesPage } from "./pages/BusinessSalesPage";
+import { BusinessAnalyticsPage } from "./pages/BusinessAnalyticsPage";
+import { BusinessHRPage } from "./pages/BusinessHRPage";
+import { BusinessInventoryPage } from "./pages/BusinessInventoryPage";
+import { BusinessCRMPage } from "./pages/BusinessCRMPage";
+import { BusinessHelpdeskPage } from "./pages/BusinessHelpdeskPage";
+import { BusinessMarketingPage } from "./pages/BusinessMarketingPage";
+import { BusinessMarketingFlowsPage } from "./pages/BusinessMarketingFlowsPage";
+import { BusinessEcommercePage } from "./pages/BusinessEcommercePage";
+import { BusinessBrainPage } from "./pages/BusinessBrainPage";
+import { BusinessKnowledgePage } from "./pages/BusinessKnowledgePage";
+import { BusinessAutomationsPage } from "./pages/BusinessAutomationsPage";
+import { BusinessMessagingPage } from "./pages/BusinessMessagingPage";
+import { BusinessHermesPage } from "./pages/BusinessHermesPage";
+import { BusinessPaymentsPage } from "./pages/BusinessPaymentsPage";
+import { BusinessBankingPage } from "./pages/BusinessBankingPage";
+import { BusinessAnalystPage } from "./pages/BusinessAnalystPage";
+import { BusinessAiCofounderPage } from "./pages/BusinessAiCofounderPage";
+import { BusinessHealthPage } from "./pages/BusinessHealthPage";
+import { BusinessSimulationPage } from "./pages/BusinessSimulationPage";
+import { BusinessAgentsHirePage } from "./pages/BusinessAgentsHirePage";
+import { BusinessAgentDetailPage } from "./pages/BusinessAgentDetailPage";
+import { BusinessAgentMemoryPage } from "./pages/BusinessAgentMemoryPage";
+import { BusinessStorefrontBuilderPage } from "./pages/BusinessStorefrontBuilderPage";
+import { BusinessImportPage } from "./pages/BusinessImportPage";
+import { BusinessAuditLogPage } from "./pages/BusinessAuditLogPage";
+import { BusinessRolesPermissionsPage } from "./pages/BusinessRolesPermissionsPage";
+import { WorkspacePage } from "./pages/WorkspacePage";
+import { SalonDashboardPage } from "./pages/verticals/SalonDashboardPage";
+import { SalonAppointmentsPage } from "./pages/verticals/SalonAppointmentsPage";
+import { SalonServicesPage } from "./pages/verticals/SalonServicesPage";
+import { SalonStaffPage } from "./pages/verticals/SalonStaffPage";
+import { RestaurantDashboardPage } from "./pages/verticals/RestaurantDashboardPage";
+import { RestaurantPosPage } from "./pages/verticals/RestaurantPosPage";
+import { RestaurantMenuPage } from "./pages/verticals/RestaurantMenuPage";
+import { RestaurantTablesPage } from "./pages/verticals/RestaurantTablesPage";
+import { RestaurantKitchenPage } from "./pages/verticals/RestaurantKitchenPage";
+import { ClinicDashboardPage } from "./pages/verticals/ClinicDashboardPage";
+import { ClinicPatientsPage } from "./pages/verticals/ClinicPatientsPage";
+import { ClinicPatientDetailPage } from "./pages/verticals/ClinicPatientDetailPage";
+import { ClinicAppointmentsPage } from "./pages/verticals/ClinicAppointmentsPage";
+import { ClinicVisitPage } from "./pages/verticals/ClinicVisitPage";
+import { RetailDashboardPage } from "./pages/verticals/RetailDashboardPage";
+import { RetailPosPage } from "./pages/verticals/RetailPosPage";
+import { RetailInventoryPage } from "./pages/verticals/RetailInventoryPage";
+import { RetailLoyaltyPage } from "./pages/verticals/RetailLoyaltyPage";
+import { RetailEndOfDayPage } from "./pages/verticals/RetailEndOfDayPage";
 import { Approvals } from "./pages/Approvals";
 import { ApprovalDetail } from "./pages/ApprovalDetail";
 import { Costs } from "./pages/Costs";
@@ -53,6 +112,14 @@ import { CliAuthPage } from "./pages/CliAuth";
 import { InviteLandingPage } from "./pages/InviteLanding";
 import { JoinRequestQueue } from "./pages/JoinRequestQueue";
 import { NotFoundPage } from "./pages/NotFound";
+import { StorefrontLayout } from "./pages/public/StorefrontLayout";
+import { StorefrontHomePage } from "./pages/public/StorefrontHomePage";
+import { StorefrontProductsPage } from "./pages/public/StorefrontProductsPage";
+import { StorefrontProductDetailPage } from "./pages/public/StorefrontProductDetailPage";
+import { StorefrontCartPage } from "./pages/public/StorefrontCartPage";
+import { StorefrontCheckoutPage } from "./pages/public/StorefrontCheckoutPage";
+import { StorefrontOrderPage } from "./pages/public/StorefrontOrderPage";
+import { StorefrontAccountPage } from "./pages/public/StorefrontAccountPage";
 import { useCompany } from "./context/CompanyContext";
 import { useDialogActions } from "./context/DialogContext";
 import { loadLastInboxTab } from "./lib/inbox";
@@ -118,6 +185,71 @@ function boardRoutes() {
       <Route path="execution-workspaces/:workspaceId/routines" element={<ExecutionWorkspaceDetail />} />
       <Route path="goals" element={<Goals />} />
       <Route path="goals/:goalId" element={<GoalDetail />} />
+      <Route path="business" element={<Business />} />
+      <Route path="business/setup" element={<BusinessSetup />} />
+      <Route path="business/dashboard" element={<BusinessDashboard />} />
+      <Route path="business/analytics" element={<BusinessAnalyticsPage />} />
+      <Route path="business/finance" element={<BusinessFinancePage />} />
+      <Route path="business/finance/:tab" element={<BusinessFinancePage />} />
+      <Route path="business/accounting" element={<BusinessAccountingPage />} />
+      <Route path="business/accounting/coa" element={<BusinessChartOfAccountsPage />} />
+      <Route path="business/accounting/journal" element={<BusinessJournalPage />} />
+      <Route path="business/accounting/ledger" element={<BusinessLedgerPage />} />
+      <Route path="business/accounting/statements" element={<BusinessFinancialStatementsPage />} />
+      <Route path="business/sales" element={<BusinessSalesPage />} />
+      <Route path="business/sales/:tab" element={<BusinessSalesPage />} />
+      <Route path="business/hr" element={<BusinessHRPage />} />
+      <Route path="business/hr/:tab" element={<BusinessHRPage />} />
+      <Route path="business/inventory" element={<BusinessInventoryPage />} />
+      <Route path="business/inventory/:tab" element={<BusinessInventoryPage />} />
+      <Route path="business/crm" element={<BusinessCRMPage />} />
+      <Route path="business/crm/:tab" element={<BusinessCRMPage />} />
+      <Route path="business/helpdesk" element={<BusinessHelpdeskPage />} />
+      <Route path="business/helpdesk/:tab" element={<BusinessHelpdeskPage />} />
+      <Route path="business/marketing" element={<BusinessMarketingPage />} />
+      <Route path="business/marketing/flows" element={<BusinessMarketingFlowsPage />} />
+      <Route path="business/marketing/:tab" element={<BusinessMarketingPage />} />
+      <Route path="business/ecommerce" element={<BusinessEcommercePage />} />
+      <Route path="business/ecommerce/:tab" element={<BusinessEcommercePage />} />
+      <Route path="business/storefront-builder" element={<BusinessStorefrontBuilderPage />} />
+      <Route path="business/import" element={<BusinessImportPage />} />
+      <Route path="business/brain" element={<BusinessBrainPage />} />
+      <Route path="business/knowledge" element={<BusinessKnowledgePage />} />
+      <Route path="business/automations" element={<BusinessAutomationsPage />} />
+      <Route path="business/analyst" element={<BusinessAnalystPage />} />
+      <Route path="business/cofounder" element={<BusinessAiCofounderPage />} />
+      <Route path="business/health" element={<BusinessHealthPage />} />
+      <Route path="business/simulation" element={<BusinessSimulationPage />} />
+      <Route path="business/agents/hire" element={<BusinessAgentsHirePage />} />
+      <Route path="business/agents/:agentSlug" element={<BusinessAgentDetailPage />} />
+      <Route path="business/agents/:agentSlug/memory" element={<BusinessAgentMemoryPage />} />
+      <Route path="business/messaging" element={<BusinessMessagingPage />} />
+      <Route path="business/hermes" element={<BusinessHermesPage />} />
+      <Route path="business/payments" element={<BusinessPaymentsPage />} />
+      <Route path="business/banking" element={<BusinessBankingPage />} />
+      <Route path="business/audit" element={<BusinessAuditLogPage />} />
+      <Route path="business/roles" element={<BusinessRolesPermissionsPage />} />
+      <Route path="business/salon" element={<SalonDashboardPage />} />
+      <Route path="business/salon/appointments" element={<SalonAppointmentsPage />} />
+      <Route path="business/salon/services" element={<SalonServicesPage />} />
+      <Route path="business/salon/staff" element={<SalonStaffPage />} />
+      <Route path="business/restaurant" element={<RestaurantDashboardPage />} />
+      <Route path="business/restaurant/pos" element={<RestaurantPosPage />} />
+      <Route path="business/restaurant/menu" element={<RestaurantMenuPage />} />
+      <Route path="business/restaurant/tables" element={<RestaurantTablesPage />} />
+      <Route path="business/restaurant/kitchen" element={<RestaurantKitchenPage />} />
+      <Route path="business/clinic" element={<ClinicDashboardPage />} />
+      <Route path="business/clinic/patients" element={<ClinicPatientsPage />} />
+      <Route path="business/clinic/patients/:id" element={<ClinicPatientDetailPage />} />
+      <Route path="business/clinic/appointments" element={<ClinicAppointmentsPage />} />
+      <Route path="business/clinic/visits/:id" element={<ClinicVisitPage />} />
+      <Route path="business/retail" element={<RetailDashboardPage />} />
+      <Route path="business/retail/pos" element={<RetailPosPage />} />
+      <Route path="business/retail/inventory" element={<RetailInventoryPage />} />
+      <Route path="business/retail/loyalty" element={<RetailLoyaltyPage />} />
+      <Route path="business/retail/end-of-day" element={<RetailEndOfDayPage />} />
+      <Route path="business/:moduleKey" element={<BusinessModuleView />} />
+      <Route path="workspace" element={<WorkspacePage />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
       <Route path="approvals/all" element={<Approvals />} />
@@ -260,6 +392,21 @@ function NoCompaniesStartPage() {
   );
 }
 
+/**
+ * Wraps the CloudAccessGate so that authenticated/auth-gated routes also get
+ * the PWA offline indicator + install prompt without leaking those into the
+ * public auth/storefront/invite routes.
+ */
+function AuthGatedShell() {
+  return (
+    <>
+      <OfflineIndicator />
+      <PwaInstallBanner />
+      <CloudAccessGate />
+    </>
+  );
+}
+
 export function App() {
   return (
     <>
@@ -270,7 +417,23 @@ export function App() {
         <Route path="invite/:token" element={<InviteLandingPage />} />
         <Route path="tests/perf/long-thread" element={<IssueChatLongThreadPerf />} />
 
-        <Route element={<CloudAccessGate />}>
+        {/*
+         * Public-facing storefront routes. These are mounted OUTSIDE the
+         * CloudAccessGate auth wall so anonymous customers can browse, buy,
+         * and track their orders without needing a Paperclip account. Each
+         * storefront is scoped by its public slug.
+         */}
+        <Route path="shop/:storefrontSlug" element={<StorefrontLayout />}>
+          <Route index element={<StorefrontHomePage />} />
+          <Route path="products" element={<StorefrontProductsPage />} />
+          <Route path="product/:productSlug" element={<StorefrontProductDetailPage />} />
+          <Route path="cart" element={<StorefrontCartPage />} />
+          <Route path="checkout" element={<StorefrontCheckoutPage />} />
+          <Route path="order/:orderId" element={<StorefrontOrderPage />} />
+          <Route path="account" element={<StorefrontAccountPage />} />
+        </Route>
+
+        <Route element={<AuthGatedShell />}>
           <Route index element={<CompanyRootRedirect />} />
           <Route path="onboarding" element={<OnboardingRoutePage />} />
           <Route path="instance" element={<Navigate to="/instance/settings/general" replace />} />
@@ -308,6 +471,41 @@ export function App() {
           <Route path="projects/:projectId/workspaces/:workspaceId" element={<UnprefixedBoardRedirect />} />
           <Route path="projects/:projectId/configuration" element={<UnprefixedBoardRedirect />} />
           <Route path="workspaces" element={<UnprefixedBoardRedirect />} />
+          <Route path="business" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/setup" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/dashboard" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/analytics" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/finance" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/finance/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/coa" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/journal" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/ledger" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/accounting/statements" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/sales" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/sales/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/hr" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/hr/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/inventory" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/inventory/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/crm" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/crm/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/helpdesk" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/helpdesk/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/marketing" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/marketing/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/ecommerce" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/ecommerce/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/import" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/brain" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/automations" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/messaging" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/payments" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/audit" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/roles" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/:moduleKey" element={<UnprefixedBoardRedirect />} />
+          <Route path="business/:moduleKey/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="workspace" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId/services" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId/configuration" element={<UnprefixedBoardRedirect />} />

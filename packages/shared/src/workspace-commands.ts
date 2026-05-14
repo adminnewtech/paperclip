@@ -206,3 +206,111 @@ export function matchWorkspaceRuntimeServiceToCommand<
 
   return bestScore > 0 ? bestMatch : null;
 }
+
+// ---------------------------------------------------------------------------
+// Phase 11 — Slash Commands + Smart Cards
+// ---------------------------------------------------------------------------
+//
+// The types below are unrelated to the workspace-runtime command definitions
+// above; they describe slash commands and entity smart cards rendered inside
+// the workspace chat (P11 Workspace + AI Members feature). Kept in this file
+// so all "workspace command" surface area lives next to its existing siblings.
+
+export type SlashCommandCategory =
+  | "business"
+  | "agent"
+  | "report"
+  | "system"
+  | "messaging";
+
+export type SlashCommandArgumentType =
+  | "string"
+  | "number"
+  | "mention"
+  | "entity_id"
+  | "enum"
+  | "rest";
+
+export interface CommandArgument {
+  name: string;
+  type: SlashCommandArgumentType;
+  required: boolean;
+  description: string;
+  descriptionAr: string;
+  enumValues?: string[];
+  default?: unknown;
+}
+
+export interface SlashCommand {
+  name: string;
+  aliases?: string[];
+  description: string;
+  descriptionAr: string;
+  category: SlashCommandCategory;
+  examples: string[];
+  arguments: CommandArgument[];
+  permissions?: string[];
+}
+
+export interface CommandInvocationContext {
+  companyId: string;
+  channelId: string;
+  actorMemberId: string;
+  lang: "ar" | "en";
+}
+
+export interface CommandInvocation {
+  name: string;
+  raw: string;
+  args: Record<string, unknown>;
+  ctx: CommandInvocationContext;
+}
+
+export type SmartCardType =
+  | "invoice"
+  | "order"
+  | "ticket"
+  | "expense"
+  | "payment"
+  | "deal"
+  | "customer"
+  | "product";
+
+export interface SmartCardAction {
+  key: string;
+  label: string;
+  labelAr: string;
+  style: "primary" | "secondary" | "destructive";
+  requiresConfirmation?: boolean;
+}
+
+export interface SmartCard {
+  cardType: SmartCardType;
+  entityId: string;
+  snapshot: Record<string, unknown>;
+  actions: SmartCardAction[];
+}
+
+export interface CommandResult {
+  success: boolean;
+  message: string;
+  messageAr?: string;
+  cards?: SmartCard[];
+  errorCode?: string;
+  data?: Record<string, unknown>;
+  /**
+   * Set to true when the command requires confirmation before executing
+   * (e.g. destructive operations). The UI should prompt the user, then
+   * re-submit with confirmed=true.
+   */
+  needsConfirmation?: boolean;
+}
+
+export interface ParsedSlashCommand {
+  name: string;
+  raw: string;
+  rawArgs: string;
+  positional: string[];
+  named: Record<string, string>;
+}
+

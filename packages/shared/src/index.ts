@@ -642,6 +642,35 @@ export {
   scoreWorkspaceRuntimeServiceMatch,
 } from "./workspace-commands.js";
 
+export type {
+  SlashCommand,
+  SlashCommandCategory,
+  SlashCommandArgumentType,
+  CommandArgument,
+  CommandInvocation,
+  CommandInvocationContext,
+  CommandResult,
+  ParsedSlashCommand,
+  SmartCard,
+  SmartCardAction,
+  SmartCardType,
+} from "./workspace-commands.js";
+
+export {
+  INVOICE_ACTIONS,
+  ORDER_ACTIONS,
+  TICKET_ACTIONS,
+  EXPENSE_ACTIONS,
+  PAYMENT_ACTIONS,
+  DEAL_ACTIONS,
+  CUSTOMER_ACTIONS,
+  PRODUCT_ACTIONS,
+  SMART_CARD_TYPES,
+  ACTION_KEYS_BY_CARD_TYPE,
+  isValidActionKey,
+  type SmartCardTypeKey,
+} from "./workspace-card-actions.js";
+
 export {
   DEFAULT_FEEDBACK_DATA_SHARING_PREFERENCE,
   FEEDBACK_TARGET_TYPES,
@@ -1013,6 +1042,22 @@ export {
   type ListPluginState,
 } from "./validators/index.js";
 
+export {
+  IMPORT_SOURCES,
+  IMPORT_TARGET_TYPES,
+  IMPORT_TEMPLATES,
+  detectTemplate,
+  getImportTemplate,
+  isImportSource,
+  isImportTargetType,
+  suggestMapping,
+} from "./import-templates.js";
+export type {
+  ImportFieldMapping,
+  ImportSource,
+  ImportTargetType,
+  ImportTransform,
+} from "./import-templates.js";
 export { API_PREFIX, API } from "./api.js";
 export { normalizeAgentUrlKey, deriveAgentUrlKey, isUuidLike } from "./agent-url-key.js";
 export { deriveProjectUrlKey, normalizeProjectUrlKey, hasNonAsciiContent } from "./project-url-key.js";
@@ -1097,3 +1142,201 @@ export type {
   EnvironmentProviderCapability,
   EnvironmentSupportStatus,
 } from "./environment-support.js";
+
+export {
+  isDebitNormal,
+  isCreditNormal,
+  validateJournalLines,
+} from "./accounting.js";
+export type {
+  AccountType,
+  AccountSubtype,
+  ChartOfAccount,
+  JournalEntryStatus,
+  JournalReferenceType,
+  JournalLine,
+  JournalEntry,
+  TrialBalanceRow,
+  StatementLine,
+  IncomeStatement,
+  BalanceSheet,
+  CashFlowLine,
+  CashFlowStatement,
+} from "./accounting.js";
+
+export {
+  BUSINESS_MODULES,
+  INDUSTRY_PRESETS,
+  getBusinessModule,
+  getBusinessEntitySpec,
+  getIndustryPreset,
+} from "./business-modules.js";
+export type {
+  BusinessModuleKey,
+  BusinessModuleSpec,
+  BusinessEntitySpec,
+  BusinessEntityFieldSpec,
+  BusinessEntityType,
+  IndustryPreset,
+} from "./business-modules.js";
+
+export {
+  INDUSTRY_VERTICALS,
+  getIndustryVertical,
+  listIndustryVerticals,
+} from "./industry-verticals.js";
+export type {
+  VerticalKey,
+  VerticalFieldType,
+  VerticalEntityFieldSpec,
+  VerticalEntitySpec,
+  VerticalDashboardKpi,
+  VerticalIndustryAverages,
+  IndustryVertical,
+} from "./industry-verticals.js";
+
+export {
+  BUSINESS_ROLES,
+  BUSINESS_MODULE_KEYS_FOR_PERMS,
+  ROLE_PRESETS,
+  ROLE_LABELS,
+  ROLE_DESCRIPTIONS,
+  getRolePreset,
+  clonePermissionSet,
+} from "./business-permissions.js";
+export type {
+  BusinessRole,
+  ModulePermissions,
+  PermissionSet,
+} from "./business-permissions.js";
+
+export {
+  BUSINESS_AGENTS,
+  getBusinessAgentDefinition,
+  listBusinessAgentDefinitions,
+} from "./business-agents.js";
+export type {
+  BusinessAgentSlug,
+  BusinessAgentSchedule,
+  BusinessAgentCapabilityTrigger,
+  BusinessAgentCapability,
+  BusinessAgentDefinition,
+} from "./business-agents.js";
+
+export {
+  BUSINESS_EVENT_CATALOG,
+  BUSINESS_EVENT_IMPORTANCE_ORDER,
+  compareBusinessEventImportance,
+  getBusinessEventDefinition,
+  listBusinessEventDefinitions,
+  renderBusinessEventTemplate,
+} from "./workspace-events.js";
+export type {
+  BusinessEventCategory,
+  BusinessEventCardType,
+  BusinessEventDefinition,
+  BusinessEventImportance,
+} from "./workspace-events.js";
+
+export {
+  MESSAGE_TEMPLATES,
+  getMessageTemplate,
+  renderMessageTemplate,
+} from "./messaging-templates.js";
+export type {
+  MessageTemplate,
+  MessageTemplateChannel,
+  MessageTemplateCategory,
+} from "./messaging-templates.js";
+
+export {
+  MARKETING_FLOW_TEMPLATES,
+  getMarketingFlowTemplate,
+} from "./marketing-flow-templates.js";
+export type {
+  MarketingFlow,
+  MarketingFlowTemplate,
+  FlowTrigger,
+  FlowTriggerKind,
+  FlowAudience,
+  FlowStep,
+  FlowStepKind,
+  FlowEnrollment,
+} from "./marketing-flow-templates.js";
+
+export {
+  GCC_CURRENCIES,
+  GCC_COUNTRIES,
+  GCC_CURRENCY_CODES,
+  GCC_COUNTRY_CODES,
+  DEFAULT_COUNTRY,
+  DEFAULT_CURRENCY,
+  convertCurrency,
+  formatCurrency,
+  getDecimals,
+  isGccCountryCode,
+  isGccCurrency,
+  parseCurrency,
+} from "./gcc-locale.js";
+export type {
+  GccCountryCode,
+  GccCountryInfo,
+  GccCurrency,
+  GccCurrencyInfo,
+} from "./gcc-locale.js";
+export {
+  GOSI_RATES_SAUDI,
+  GOSI_RATES_NON_SAUDI,
+  GOSI_SALARY_FLOOR_CENTS,
+  GOSI_SALARY_CEILING_CENTS,
+  clampGosiContributoryWageCents,
+  getGosiRates,
+} from "./gosi-rates.js";
+export type { GosiNationality, GosiRates } from "./gosi-rates.js";
+
+export {
+  WORKSPACE_MODULE_KEY,
+  WORKSPACE_ENTITY_TYPES,
+  DEFAULT_CHANNEL_SLUGS,
+  computeDmKey,
+} from "./workspace.js";
+export type {
+  ChannelKind,
+  WorkspaceChannel,
+  MessageKind,
+  WorkspaceMessage,
+  WorkspaceMessageAttachment,
+  WorkspaceMessageCard,
+  WorkspaceMessageCardAction,
+  WorkspaceMessageMention,
+  MemberType,
+  WorkspaceMember,
+  WorkspaceMemberStatus,
+  ChannelReadState,
+  MessageReaction,
+  WorkspaceStreamEvent,
+  WorkspaceEntityType,
+  DefaultChannelSlug,
+} from "./workspace.js";
+export {
+  HERMES_CAPABILITIES,
+  isHermesAgentInfo,
+  isHermesTaskResponse,
+  isHermesAgentMessagePayload,
+  isHermesAgentActionPayload,
+} from "./hermes-protocol.js";
+export type {
+  HermesCapability,
+  HermesAgentStatus,
+  HermesModelTier,
+  HermesAgentInfo,
+  HermesTaskRequest,
+  HermesTaskStatus,
+  HermesTaskAction,
+  HermesTaskResponse,
+  HermesWebhookEventType,
+  HermesWebhookEvent,
+  HermesWebhookEventData,
+  HermesAgentMessagePayload,
+  HermesAgentActionPayload,
+} from "./hermes-protocol.js";
