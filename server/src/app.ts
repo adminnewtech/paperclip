@@ -59,6 +59,15 @@ import { businessBulkRoutes } from "./routes/business-bulk.js";
 import { businessImportRoutes } from "./routes/business-import.js";
 import { businessStreamRoutes } from "./routes/business-stream.js";
 import { businessAttachmentsRoutes } from "./routes/business-attachments.js";
+import { hermesRoutes, hermesWebhookRoutes } from "./routes/hermes.js";
+import { workspaceSearchRoutes } from "./routes/workspace-search.js";
+import { workspaceAiRoutes } from "./routes/workspace-ai.js";
+import { workspaceCommandsRoutes } from "./routes/workspace-commands.js";
+import { createAiMembersService } from "./services/workspace/ai-members-service.js";
+import { createEventBridgeService } from "./services/workspace/event-bridge-service.js";
+import { createAgentResponseService } from "./services/workspace/agent-response-service.js";
+import { workspaceRoutes } from "./routes/workspace.js";
+import { createWorkspaceService } from "./services/workspace/index.js";
 import { clinicsRoutes } from "./routes/verticals/clinics.js";
 import { restaurantsRoutes } from "./routes/verticals/restaurants.js";
 import { retailRoutes } from "./routes/verticals/retail.js";
@@ -212,6 +221,8 @@ export async function createApp(
   // /api router so that the boardMutationGuard / company access checks do not
   // apply to anonymous customers visiting a /shop/:slug page.
   app.use("/api/public", publicStorefrontRoutes(db));
+  // Hermes webhook receiver — signature-validated, no auth.
+  app.use("/api/public/webhooks/hermes", hermesWebhookRoutes(db));
   app.use(llmRoutes(db));
 
   const hostServicesDisposers = new Map<string, () => void>();
@@ -267,6 +278,14 @@ export async function createApp(
   api.use(businessAuditRoutes(businessAuditService, businessRbacService));
   api.use(businessRbacRoutes(businessRbacService, businessAuditService));
   api.use(businessReportsRoutes(db));
+  // ---- Phase 11-A: Workspace Core (channels, messages, members, stream) --
+  // The WorkspaceService is the canonical home for Slack-like collaboration
+  // surfaces. Sub-services are aggregated by `createWorkspaceService` and
+  // exposed under `/api/companies/:companyId/workspace/*`.
+  const workspaceService = createWorkspaceService(db, {
+    businessStreamService,
+  });
+  api.use(workspaceRoutes(db, workspaceService));
   api.use(businessAccountingRoutes(db));
   api.use(marketingAutomationRoutes(db));
   api.use(businessAgentsRoutes(db));
@@ -296,6 +315,66 @@ export async function createApp(
   api.use(businessImportRoutes(db));
   api.use(businessStreamRoutes(db, businessStreamService));
   api.use(businessAttachmentsRoutes(db));
+  api.use(hermesRoutes(db));
+  api.use(workspaceSearchRoutes(db));
+
+  // ---- Phase 11-B: workspace AI members + event bridge ------------------
+  // The workspace core (P11-A) provides the canonical channel/member/message
+  // services. Until those are wired here, the AI members service runs in
+  // no-op mode (status updates + posts are logged and skipped). When P11-A
+  // lands, app.ts will call:
+  //   workspaceAiMembersService.__setRegistrar(...)
+  //   workspaceAiMembersService.__setPoster(...)
+  //   workspaceEventBridgeService.__setPoster(...)
+  // and everything will start broadcasting.
+  const workspaceAiMembersService = createAiMembersService(db);
+  const workspaceEventBridgeService = createEventBridgeService(db);
+  const workspaceAgentResponseService = createAgentResponseService(
+    db,
+    workspaceAiMembersService,
+  );
+  api.use(
+    workspaceAiRoutes(db, {
+      aiMembersService: workspaceAiMembersService,
+      eventBridgeService: workspaceEventBridgeService,
+      agentResponseService: workspaceAgentResponseService,
+    }),
+  );
+  api.use(workspaceCommandsRoutes(db));
+
+  // Bridge: business stream events → workspace channel messages.
+  // The bridge subscribes per-company on demand; we attach a global
+  // listener that routes every emitted event through the translator.
+  // (Once P11-A is wired and per-company channels exist, this will start
+  // posting; until then the bridge logs + records to event_log only.)
+  const workspaceEventBridgeBindings = new Map<string, () => void>();
+  function ensureWorkspaceEventBridgeBinding(companyId: string): void {
+    if (workspaceEventBridgeBindings.has(companyId)) return;
+    const unsubscribe = workspaceEventBridgeService.bindToBusinessStream(
+      companyId,
+      businessStreamService,
+    );
+    workspaceEventBridgeBindings.set(companyId, unsubscribe);
+  }
+  // Per-company bridge subscriptions are created on demand via
+  // `ensureWorkspaceEventBridgeBinding`. Downstream services (e.g. P11-A's
+  // channel-init helper or company onboarding) should call this once they
+  // know which companies need bridged events.
+
+  // Best-effort: expose the binding helper for downstream wiring. Tests and
+  // higher-level services can call ensureWorkspaceEventBridgeBinding(id) to
+  // begin bridging events for a specific company.
+  (app as unknown as {
+    workspaceEventBridge?: {
+      ensureBinding: (companyId: string) => void;
+      service: typeof workspaceEventBridgeService;
+      members: typeof workspaceAiMembersService;
+    };
+  }).workspaceEventBridge = {
+    ensureBinding: ensureWorkspaceEventBridgeBinding,
+    service: workspaceEventBridgeService,
+    members: workspaceAiMembersService,
+  };
   api.use(clinicsRoutes(db));
   api.use(restaurantsRoutes(db));
   api.use(retailRoutes(db));

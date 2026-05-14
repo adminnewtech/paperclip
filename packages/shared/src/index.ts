@@ -642,6 +642,35 @@ export {
   scoreWorkspaceRuntimeServiceMatch,
 } from "./workspace-commands.js";
 
+export type {
+  SlashCommand,
+  SlashCommandCategory,
+  SlashCommandArgumentType,
+  CommandArgument,
+  CommandInvocation,
+  CommandInvocationContext,
+  CommandResult,
+  ParsedSlashCommand,
+  SmartCard,
+  SmartCardAction,
+  SmartCardType,
+} from "./workspace-commands.js";
+
+export {
+  INVOICE_ACTIONS,
+  ORDER_ACTIONS,
+  TICKET_ACTIONS,
+  EXPENSE_ACTIONS,
+  PAYMENT_ACTIONS,
+  DEAL_ACTIONS,
+  CUSTOMER_ACTIONS,
+  PRODUCT_ACTIONS,
+  SMART_CARD_TYPES,
+  ACTION_KEYS_BY_CARD_TYPE,
+  isValidActionKey,
+  type SmartCardTypeKey,
+} from "./workspace-card-actions.js";
+
 export {
   DEFAULT_FEEDBACK_DATA_SHARING_PREFERENCE,
   FEEDBACK_TARGET_TYPES,
@@ -1289,3 +1318,25 @@ export type {
   WorkspaceEntityType,
   DefaultChannelSlug,
 } from "./workspace.js";
+export {
+  HERMES_CAPABILITIES,
+  isHermesAgentInfo,
+  isHermesTaskResponse,
+  isHermesAgentMessagePayload,
+  isHermesAgentActionPayload,
+} from "./hermes-protocol.js";
+export type {
+  HermesCapability,
+  HermesAgentStatus,
+  HermesModelTier,
+  HermesAgentInfo,
+  HermesTaskRequest,
+  HermesTaskStatus,
+  HermesTaskAction,
+  HermesTaskResponse,
+  HermesWebhookEventType,
+  HermesWebhookEvent,
+  HermesWebhookEventData,
+  HermesAgentMessagePayload,
+  HermesAgentActionPayload,
+} from "./hermes-protocol.js";

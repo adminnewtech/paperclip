@@ -141,26 +141,23 @@ function rowToChannel(row: EntityRow): WorkspaceChannel | null {
   };
 }
 
-function selectChannelRows(db: Db, companyId: string) {
-  return db
-    .select({
-      id: businessEntities.id,
-      companyId: businessEntities.companyId,
-      code: businessEntities.code,
-      name: businessEntities.name,
-      status: businessEntities.status,
-      data: businessEntities.data,
-      createdAt: businessEntities.createdAt,
-      createdByUserId: businessEntities.createdByUserId,
-    })
-    .from(businessEntities)
-    .where(
-      and(
-        eq(businessEntities.companyId, companyId),
-        eq(businessEntities.moduleKey, WORKSPACE_MODULE_KEY),
-        eq(businessEntities.entityType, WORKSPACE_ENTITY_TYPES.channel),
-      ),
-    );
+const CHANNEL_COLUMNS = {
+  id: businessEntities.id,
+  companyId: businessEntities.companyId,
+  code: businessEntities.code,
+  name: businessEntities.name,
+  status: businessEntities.status,
+  data: businessEntities.data,
+  createdAt: businessEntities.createdAt,
+  createdByUserId: businessEntities.createdByUserId,
+} as const;
+
+function channelWhere(companyId: string) {
+  return and(
+    eq(businessEntities.companyId, companyId),
+    eq(businessEntities.moduleKey, WORKSPACE_MODULE_KEY),
+    eq(businessEntities.entityType, WORKSPACE_ENTITY_TYPES.channel),
+  );
 }
 
 export function createChannelsService(
@@ -210,14 +207,10 @@ export function createChannelsService(
     companyId: string,
     channelId: string,
   ): Promise<{ row: EntityRow; data: ChannelData } | null> {
-    const [row] = await selectChannelRows(db, companyId).where(
-      and(
-        eq(businessEntities.companyId, companyId),
-        eq(businessEntities.moduleKey, WORKSPACE_MODULE_KEY),
-        eq(businessEntities.entityType, WORKSPACE_ENTITY_TYPES.channel),
-        eq(businessEntities.id, channelId),
-      ),
-    );
+    const [row] = await db
+      .select(CHANNEL_COLUMNS)
+      .from(businessEntities)
+      .where(and(channelWhere(companyId), eq(businessEntities.id, channelId)));
     if (!row) return null;
     const data = (row.data ?? {}) as ChannelData;
     data.memberIds = Array.isArray(data.memberIds) ? data.memberIds : [];
@@ -226,9 +219,11 @@ export function createChannelsService(
 
   return {
     async list(companyId, opts) {
-      const rows = await selectChannelRows(db, companyId).orderBy(
-        asc(businessEntities.code),
-      );
+      const rows = await db
+        .select(CHANNEL_COLUMNS)
+        .from(businessEntities)
+        .where(channelWhere(companyId))
+        .orderBy(asc(businessEntities.code));
       const channels = rows
         .map((row) => rowToChannel(row))
         .filter((c): c is WorkspaceChannel => c !== null);
@@ -261,14 +256,10 @@ export function createChannelsService(
     },
 
     async getBySlug(companyId, slug) {
-      const [row] = await selectChannelRows(db, companyId).where(
-        and(
-          eq(businessEntities.companyId, companyId),
-          eq(businessEntities.moduleKey, WORKSPACE_MODULE_KEY),
-          eq(businessEntities.entityType, WORKSPACE_ENTITY_TYPES.channel),
-          eq(businessEntities.code, slug),
-        ),
-      );
+      const [row] = await db
+        .select(CHANNEL_COLUMNS)
+        .from(businessEntities)
+        .where(and(channelWhere(companyId), eq(businessEntities.code, slug)));
       if (!row) return null;
       return rowToChannel(row);
     },
@@ -387,7 +378,10 @@ export function createChannelsService(
 
     async findOrCreateDm(companyId, memberA, memberB) {
       const dmKey = computeDmKey(memberA, memberB);
-      const rows = await selectChannelRows(db, companyId);
+      const rows = await db
+        .select(CHANNEL_COLUMNS)
+        .from(businessEntities)
+        .where(channelWhere(companyId));
       for (const row of rows) {
         const data = (row.data ?? {}) as Partial<ChannelData>;
         if (data.kind === "dm" && data.dmKey === dmKey) {

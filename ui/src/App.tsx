@@ -47,6 +47,7 @@ import { BusinessBrainPage } from "./pages/BusinessBrainPage";
 import { BusinessKnowledgePage } from "./pages/BusinessKnowledgePage";
 import { BusinessAutomationsPage } from "./pages/BusinessAutomationsPage";
 import { BusinessMessagingPage } from "./pages/BusinessMessagingPage";
+import { BusinessHermesPage } from "./pages/BusinessHermesPage";
 import { BusinessPaymentsPage } from "./pages/BusinessPaymentsPage";
 import { BusinessBankingPage } from "./pages/BusinessBankingPage";
 import { BusinessAnalystPage } from "./pages/BusinessAnalystPage";
@@ -60,6 +61,7 @@ import { BusinessStorefrontBuilderPage } from "./pages/BusinessStorefrontBuilder
 import { BusinessImportPage } from "./pages/BusinessImportPage";
 import { BusinessAuditLogPage } from "./pages/BusinessAuditLogPage";
 import { BusinessRolesPermissionsPage } from "./pages/BusinessRolesPermissionsPage";
+import { WorkspacePage } from "./pages/WorkspacePage";
 import { SalonDashboardPage } from "./pages/verticals/SalonDashboardPage";
 import { SalonAppointmentsPage } from "./pages/verticals/SalonAppointmentsPage";
 import { SalonServicesPage } from "./pages/verticals/SalonServicesPage";
@@ -222,6 +224,7 @@ function boardRoutes() {
       <Route path="business/agents/:agentSlug" element={<BusinessAgentDetailPage />} />
       <Route path="business/agents/:agentSlug/memory" element={<BusinessAgentMemoryPage />} />
       <Route path="business/messaging" element={<BusinessMessagingPage />} />
+      <Route path="business/hermes" element={<BusinessHermesPage />} />
       <Route path="business/payments" element={<BusinessPaymentsPage />} />
       <Route path="business/banking" element={<BusinessBankingPage />} />
       <Route path="business/audit" element={<BusinessAuditLogPage />} />
@@ -246,6 +249,7 @@ function boardRoutes() {
       <Route path="business/retail/loyalty" element={<RetailLoyaltyPage />} />
       <Route path="business/retail/end-of-day" element={<RetailEndOfDayPage />} />
       <Route path="business/:moduleKey" element={<BusinessModuleView />} />
+      <Route path="workspace" element={<WorkspacePage />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
       <Route path="approvals/all" element={<Approvals />} />
@@ -501,6 +505,7 @@ export function App() {
           <Route path="business/roles" element={<UnprefixedBoardRedirect />} />
           <Route path="business/:moduleKey" element={<UnprefixedBoardRedirect />} />
           <Route path="business/:moduleKey/:tab" element={<UnprefixedBoardRedirect />} />
+          <Route path="workspace" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId/services" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId/configuration" element={<UnprefixedBoardRedirect />} />
