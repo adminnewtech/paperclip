@@ -1195,6 +1195,21 @@ export type {
 } from "./business-agents.js";
 
 export {
+  BUSINESS_EVENT_CATALOG,
+  BUSINESS_EVENT_IMPORTANCE_ORDER,
+  compareBusinessEventImportance,
+  getBusinessEventDefinition,
+  listBusinessEventDefinitions,
+  renderBusinessEventTemplate,
+} from "./workspace-events.js";
+export type {
+  BusinessEventCategory,
+  BusinessEventCardType,
+  BusinessEventDefinition,
+  BusinessEventImportance,
+} from "./workspace-events.js";
+
+export {
   MESSAGE_TEMPLATES,
   getMessageTemplate,
   renderMessageTemplate,
@@ -1249,3 +1264,28 @@ export {
   getGosiRates,
 } from "./gosi-rates.js";
 export type { GosiNationality, GosiRates } from "./gosi-rates.js";
+
+export {
+  WORKSPACE_MODULE_KEY,
+  WORKSPACE_ENTITY_TYPES,
+  DEFAULT_CHANNEL_SLUGS,
+  computeDmKey,
+} from "./workspace.js";
+export type {
+  ChannelKind,
+  WorkspaceChannel,
+  MessageKind,
+  WorkspaceMessage,
+  WorkspaceMessageAttachment,
+  WorkspaceMessageCard,
+  WorkspaceMessageCardAction,
+  WorkspaceMessageMention,
+  MemberType,
+  WorkspaceMember,
+  WorkspaceMemberStatus,
+  ChannelReadState,
+  MessageReaction,
+  WorkspaceStreamEvent,
+  WorkspaceEntityType,
+  DefaultChannelSlug,
+} from "./workspace.js";
