@@ -100,6 +100,7 @@ export function Sidebar() {
           <SidebarNavItem to="/routines" label="Routines" icon={Repeat} />
           <SidebarNavItem to="/goals" label="Goals" icon={Target} />
           <SidebarNavItem to="/business" label="Business" icon={Briefcase} />
+          <SidebarNavItem to="/connectors" label="Connectors" icon={Plug} />
           {showWorkspacesLink ? (
             <SidebarNavItem to="/workspaces" label="Workspaces" icon={GitBranch} />
           ) : null}
@@ -124,7 +125,6 @@ export function Sidebar() {
 
         <SidebarSection label="Company">
           <SidebarNavItem to="/org" label="Org" icon={Network} />
-          <SidebarNavItem to="/connectors" label="Connectors" icon={Plug} />
           <SidebarNavItem to="/skills" label="Skills" icon={Boxes} />
           <SidebarNavItem to="/costs" label="Costs" icon={DollarSign} />
           <SidebarNavItem to="/activity" label="Activity" icon={History} />
