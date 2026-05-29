@@ -7,6 +7,11 @@ import type {
   BusinessEntitySpec,
   BusinessEntityFieldSpec,
 } from "@paperclipai/shared";
+import {
+  minorToMajor,
+  majorToMinor,
+  currencyFractionDigits,
+} from "@paperclipai/shared";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -224,9 +229,11 @@ function EntityList({
                   <div className="flex items-center gap-2 shrink-0">
                     {row.amountCents != null && (
                       <span className="text-sm font-mono">
-                        {(row.amountCents / 100).toLocaleString(undefined, {
+                        {minorToMajor(row.amountCents, row.currency).toLocaleString(undefined, {
                           style: "currency",
                           currency: row.currency ?? "USD",
+                          minimumFractionDigits: currencyFractionDigits(row.currency),
+                          maximumFractionDigits: currencyFractionDigits(row.currency),
                         })}
                       </span>
                     )}
@@ -316,7 +323,7 @@ function CreateEntityDialog({
       else if (field.type === "currency") {
         const num = Number(raw);
         if (!Number.isNaN(num)) {
-          amountCents = Math.round(num * 100);
+          amountCents = majorToMinor(num, values.currency ?? null);
           data[field.key] = num;
         }
       } else {

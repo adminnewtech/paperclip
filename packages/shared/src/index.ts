@@ -1264,3 +1264,10 @@ export type {
   BusinessEntityType,
   IndustryPreset,
 } from "./business-modules.js";
+
+export {
+  currencyMinorUnits,
+  currencyFractionDigits,
+  minorToMajor,
+  majorToMinor,
+} from "./currency.js";

@@ -17,7 +17,8 @@ export type BusinessModuleKey =
   | "ecommerce"
   | "projects"
   | "analytics"
-  | "documents";
+  | "documents"
+  | "integrations";
 
 export type BusinessEntityType = string;
 
@@ -531,6 +532,42 @@ const ECOMMERCE: BusinessModuleSpec = {
   ],
 };
 
+const INTEGRATIONS: BusinessModuleSpec = {
+  key: "integrations",
+  label: "Integrations",
+  arabicLabel: "التكاملات",
+  description: "External connectors for Shopify, accounting, data and ads.",
+  icon: "plug",
+  order: 90,
+  replaces: ["Zapier", "Make"],
+  entities: [
+    {
+      key: "connector",
+      label: "Connector",
+      pluralLabel: "Connectors",
+      icon: "plug",
+      primaryField: "name",
+      statusValues: [
+        { value: "connected", label: "Connected", tone: "success" },
+        { value: "disconnected", label: "Disconnected", tone: "neutral" },
+        { value: "error", label: "Error", tone: "danger" },
+      ],
+      fields: [
+        { key: "provider", label: "Provider", type: "text", required: true },
+        { key: "status", label: "Status", type: "select", options: [
+          { value: "connected", label: "Connected" },
+          { value: "disconnected", label: "Disconnected" },
+          { value: "error", label: "Error" },
+        ] },
+        { key: "authMethod", label: "Auth method", type: "text" },
+        { key: "lastSyncAt", label: "Last sync", type: "text" },
+        { key: "syncedRecords", label: "Synced records", type: "number" },
+        { key: "scopes", label: "Scopes", type: "textarea" },
+      ],
+    },
+  ],
+};
+
 export const BUSINESS_MODULES: BusinessModuleSpec[] = [
   CRM,
   SALES,
@@ -540,6 +577,7 @@ export const BUSINESS_MODULES: BusinessModuleSpec[] = [
   HELPDESK,
   MARKETING,
   ECOMMERCE,
+  INTEGRATIONS,
 ];
 
 export function getBusinessModule(key: string): BusinessModuleSpec | undefined {

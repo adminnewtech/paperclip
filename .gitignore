@@ -58,3 +58,6 @@ tests/release-smoke/playwright-report/
 .superpowers/
 .claude/worktrees/
 .herenow
+
+# CodeGraph local index
+.codegraph/
