@@ -86,3 +86,9 @@ export { pluginLogs } from "./plugin_logs.js";
 
 export { businessModules } from "./business_modules.js";
 export { businessEntities } from "./business_entities.js";
+
+export { bosDepartment } from "./bos_department.js";
+export { bosTeam } from "./bos_team.js";
+export { bosEmployee } from "./bos_employee.js";
+export { bosAgentProfile } from "./bos_agent_profile.js";
+export { bosAgentPolicy } from "./bos_agent_policy.js";
