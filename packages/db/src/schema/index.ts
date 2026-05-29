@@ -92,3 +92,14 @@ export { bosTeam } from "./bos_team.js";
 export { bosEmployee } from "./bos_employee.js";
 export { bosAgentProfile } from "./bos_agent_profile.js";
 export { bosAgentPolicy } from "./bos_agent_policy.js";
+
+export { bosWarehouse } from "./bos_warehouse.js";
+export { bosProduct } from "./bos_product.js";
+export { bosProductVariant } from "./bos_product_variant.js";
+export { bosStock } from "./bos_stock.js";
+export { bosStockMove } from "./bos_stock_move.js";
+export { bosPosSession } from "./bos_pos_session.js";
+export { bosPosOrder } from "./bos_pos_order.js";
+export { bosLedgerAccount } from "./bos_ledger_account.js";
+export { bosJournalEntry } from "./bos_journal_entry.js";
+export { bosJournalLine } from "./bos_journal_line.js";

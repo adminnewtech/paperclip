@@ -23,3 +23,4 @@ export { instanceDatabaseBackupRoutes } from "./instance-database-backups.js";
 export { cloudUpstreamRoutes } from "./cloud-upstreams.js";
 
 export { businessRoutes } from "./business.js";
+export { commerceRoutes } from "./commerce.js";

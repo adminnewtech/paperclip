@@ -666,6 +666,13 @@
       "when": 1778200000000,
       "tag": "0094_business_os_org",
       "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "7",
+      "when": 1778300000000,
+      "tag": "0095_business_os_commerce",
+      "breakpoints": true
     }
   ]
 }
