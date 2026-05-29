@@ -6,10 +6,13 @@ import {
   type ToolRunContext,
 } from "@paperclipai/plugin-sdk";
 import { DEFAULT_SERVER_URL, PLUGIN_ID, TOOL_NAMES } from "./constants.js";
+import { evaluatePolicy, type PolicyConfig, type ProposedAction } from "./policy.js";
 
 type PluginConfig = {
   serverUrl?: string;
   requireApprovalForFinance?: boolean;
+  moneyApprovalThresholdMinor?: number;
+  requireApprovalForDeletes?: boolean;
 };
 
 async function getConfig(ctx: PluginContext): Promise<PluginConfig> {
@@ -17,7 +20,66 @@ async function getConfig(ctx: PluginContext): Promise<PluginConfig> {
   return {
     serverUrl: cfg?.serverUrl ?? DEFAULT_SERVER_URL,
     requireApprovalForFinance: cfg?.requireApprovalForFinance ?? true,
+    moneyApprovalThresholdMinor: cfg?.moneyApprovalThresholdMinor ?? 0,
+    requireApprovalForDeletes: cfg?.requireApprovalForDeletes ?? true,
   };
+}
+
+/**
+ * Run the risk-tiered policy gate. If the action requires approval, create an
+ * approval issue (human-in-the-loop) and return a result telling the agent it
+ * is parked. Returns null when the action is allowed to proceed.
+ */
+async function runPolicyGate(
+  ctx: PluginContext,
+  runCtx: ToolRunContext,
+  action: ProposedAction & { entityType: string; name?: string; currency?: string | null },
+  config: PolicyConfig,
+): Promise<ToolResult | null> {
+  const decision = evaluatePolicy(action, config);
+  if (decision.rule === "allow") return null;
+
+  if (decision.rule === "deny") {
+    ctx.logger.info("policy gate: DENIED", { actionKey: decision.actionKey, tier: decision.tier });
+    return { error: `Action denied by policy (${decision.actionKey}, ${decision.tier}): ${decision.reason}` };
+  }
+
+  // rule === "approve" → park as an approval issue
+  try {
+    const approvalIssue = await ctx.issues.create({
+      companyId: runCtx.companyId,
+      projectId: runCtx.projectId,
+      title: `[Approval Required · ${decision.tier}] ${action.operation} ${action.entityType} in ${action.moduleKey}${action.name ? `: ${action.name}` : ""}`,
+      description: [
+        `An agent (run: ${runCtx.runId}) requested a **${decision.actionKey}** action that requires human approval.`,
+        ``,
+        `**Risk tier:** ${decision.tier}`,
+        `**Reason:** ${decision.reason}`,
+        `**Module:** ${action.moduleKey}`,
+        `**Entity Type:** ${action.entityType}`,
+        action.name ? `**Name:** ${action.name}` : null,
+        action.amountMinor != null
+          ? `**Amount:** ${action.amountMinor} minor units (${action.currency ?? "unknown currency"})`
+          : null,
+        ``,
+        `Review and approve or reject before the agent proceeds.`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    });
+    ctx.logger.info("policy gate: approval issue created", {
+      issueId: approvalIssue.id,
+      actionKey: decision.actionKey,
+      tier: decision.tier,
+    });
+    return {
+      content: `${decision.actionKey} action (${decision.tier} risk) requires approval. Created approval issue: ${approvalIssue.title} (ID: ${approvalIssue.id})`,
+      data: { approvalIssueId: approvalIssue.id, requiresApproval: true, tier: decision.tier },
+    };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { error: `Failed to create approval issue: ${message}` };
+  }
 }
 
 async function businessFetch(
@@ -40,10 +102,6 @@ async function businessFetch(
     throw new Error(`Business API ${res.status}: ${body.slice(0, 200)}`);
   }
   return res.json() as Promise<unknown>;
-}
-
-function isFinanceWrite(moduleKey: string): boolean {
-  return moduleKey === "finance" || moduleKey === "sales";
 }
 
 // ---------------------------------------------------------------------------
@@ -179,47 +237,21 @@ async function handleBusinessCreate(
 
   const config = await getConfig(ctx);
 
-  // Approval gate for finance/sales writes
-  if (config.requireApprovalForFinance && isFinanceWrite(p.moduleKey)) {
-    try {
-      const approvalIssue = await ctx.issues.create({
-        companyId: runCtx.companyId,
-        projectId: runCtx.projectId,
-        title: `[Approval Required] Create ${p.entityType} in ${p.moduleKey}: ${p.name}`,
-        description: [
-          `An agent (run: ${runCtx.runId}) requested a finance/sales write that requires approval.`,
-          ``,
-          `**Module:** ${p.moduleKey}`,
-          `**Entity Type:** ${p.entityType}`,
-          `**Name:** ${p.name}`,
-          p.amountCents != null
-            ? `**Amount:** ${p.amountCents} cents (${p.currency ?? "unknown currency"})`
-            : null,
-          p.status ? `**Status:** ${p.status}` : null,
-          ``,
-          `Review and approve or reject this request before the agent can proceed.`,
-        ]
-          .filter(Boolean)
-          .join("\n"),
-      });
-
-      ctx.logger.info("business.create: approval issue created", {
-        issueId: approvalIssue.id,
-        moduleKey: p.moduleKey,
-      });
-
-      return {
-        content: `Finance write requires approval. Created approval issue: ${approvalIssue.title} (ID: ${approvalIssue.id})`,
-        data: {
-          approvalIssueId: approvalIssue.id,
-          requiresApproval: true,
-        },
-      };
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return { error: `Failed to create approval issue: ${message}` };
-    }
-  }
+  // Risk-tiered policy gate (money/delete/legal → human approval)
+  const gate = await runPolicyGate(
+    ctx,
+    runCtx,
+    {
+      moduleKey: p.moduleKey,
+      operation: "create",
+      amountMinor: p.amountCents ?? null,
+      entityType: p.entityType,
+      name: p.name,
+      currency: p.currency ?? null,
+    },
+    config,
+  );
+  if (gate) return gate;
 
   const body: Record<string, unknown> = { name: p.name };
   if (p.status != null) body.status = p.status;
@@ -284,48 +316,21 @@ async function handleBusinessUpdate(
 
   const config = await getConfig(ctx);
 
-  // Approval gate for finance/sales writes
-  if (config.requireApprovalForFinance && isFinanceWrite(p.moduleKey)) {
-    try {
-      const approvalIssue = await ctx.issues.create({
-        companyId: runCtx.companyId,
-        projectId: runCtx.projectId,
-        title: `[Approval Required] Update ${p.entityType} ${p.id} in ${p.moduleKey}`,
-        description: [
-          `An agent (run: ${runCtx.runId}) requested a finance/sales update that requires approval.`,
-          ``,
-          `**Module:** ${p.moduleKey}`,
-          `**Entity Type:** ${p.entityType}`,
-          `**Entity ID:** ${p.id}`,
-          p.name ? `**New Name:** ${p.name}` : null,
-          p.status ? `**New Status:** ${p.status}` : null,
-          p.amountCents != null
-            ? `**New Amount:** ${p.amountCents} cents (${p.currency ?? "unknown currency"})`
-            : null,
-          ``,
-          `Review and approve or reject this request before the agent can proceed.`,
-        ]
-          .filter(Boolean)
-          .join("\n"),
-      });
-
-      ctx.logger.info("business.update: approval issue created", {
-        issueId: approvalIssue.id,
-        moduleKey: p.moduleKey,
-      });
-
-      return {
-        content: `Finance write requires approval. Created approval issue: ${approvalIssue.title} (ID: ${approvalIssue.id})`,
-        data: {
-          approvalIssueId: approvalIssue.id,
-          requiresApproval: true,
-        },
-      };
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return { error: `Failed to create approval issue: ${message}` };
-    }
-  }
+  // Risk-tiered policy gate (money/delete/legal → human approval)
+  const gate = await runPolicyGate(
+    ctx,
+    runCtx,
+    {
+      moduleKey: p.moduleKey,
+      operation: "update",
+      amountMinor: p.amountCents ?? null,
+      entityType: p.entityType,
+      name: p.name,
+      currency: p.currency ?? null,
+    },
+    config,
+  );
+  if (gate) return gate;
 
   const body: Record<string, unknown> = {};
   if (p.name != null) body.name = p.name;
