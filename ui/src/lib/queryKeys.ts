@@ -214,4 +214,9 @@ export const queryKeys = {
     entities: (companyId: string, moduleKey: string, entityKey: string, q?: string) =>
       ["business", "entities", companyId, moduleKey, entityKey, q] as const,
   },
+  commerce: {
+    warehouses: (companyId: string) => ["commerce", "warehouses", companyId] as const,
+    stock: (companyId: string, warehouseId?: string) =>
+      ["commerce", "stock", companyId, warehouseId ?? "__all-warehouses__"] as const,
+  },
 };

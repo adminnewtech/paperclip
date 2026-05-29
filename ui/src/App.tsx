@@ -64,6 +64,8 @@ import { BusinessModuleView } from "./pages/BusinessModuleView";
 import { Connectors } from "./pages/Connectors";
 import { Customers } from "./pages/Customers";
 import { Customer360 } from "./pages/Customer360";
+import { Warehouses } from "./pages/Warehouses";
+import { POS } from "./pages/POS";
 import { useCompany } from "./context/CompanyContext";
 import { useDialogActions } from "./context/DialogContext";
 import { loadLastInboxTab } from "./lib/inbox";
@@ -139,6 +141,8 @@ function boardRoutes() {
       <Route path="connectors" element={<Connectors />} />
       <Route path="customers" element={<Customers />} />
       <Route path="customers/:name" element={<Customer360 />} />
+      <Route path="warehouses" element={<Warehouses />} />
+      <Route path="pos" element={<POS />} />
       <Route path="approvals" element={<Navigate to="/approvals/pending" replace />} />
       <Route path="approvals/pending" element={<Approvals />} />
       <Route path="approvals/all" element={<Approvals />} />
@@ -342,6 +346,8 @@ export function App() {
           <Route path="connectors" element={<UnprefixedBoardRedirect />} />
           <Route path="customers" element={<UnprefixedBoardRedirect />} />
           <Route path="customers/:name" element={<UnprefixedBoardRedirect />} />
+          <Route path="warehouses" element={<UnprefixedBoardRedirect />} />
+          <Route path="pos" element={<UnprefixedBoardRedirect />} />
           <Route path="workspaces" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId" element={<UnprefixedBoardRedirect />} />
           <Route path="execution-workspaces/:workspaceId/services" element={<UnprefixedBoardRedirect />} />
