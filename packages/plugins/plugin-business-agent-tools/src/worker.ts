@@ -82,6 +82,35 @@ async function runPolicyGate(
   }
 }
 
+/**
+ * Safety guard: this plugin must ONLY ever talk to the local Paperclip server.
+ * It must NEVER write to external systems (Shopify, Zoho, etc.) — those are
+ * read-only data sources synced into the local DB out-of-band. Enforce that the
+ * target host is loopback/local so a misconfigured serverUrl cannot exfiltrate
+ * or mutate an external service.
+ */
+function assertLocalTarget(serverUrl: string): void {
+  let host: string;
+  try {
+    host = new URL(serverUrl).hostname.toLowerCase();
+  } catch {
+    throw new Error(`Invalid serverUrl: ${serverUrl}`);
+  }
+  const isLocal =
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host === "::1" ||
+    host === "0.0.0.0" ||
+    host.endsWith(".local") ||
+    host === "paperclip" ||
+    host.startsWith("paperclip.");
+  if (!isLocal) {
+    throw new Error(
+      `Refusing to call non-local host "${host}". This plugin only writes to the local Paperclip server; external systems are read-only.`,
+    );
+  }
+}
+
 async function businessFetch(
   ctx: PluginContext,
   companyId: string,
@@ -89,7 +118,9 @@ async function businessFetch(
   options?: RequestInit,
 ): Promise<unknown> {
   const config = await getConfig(ctx);
-  const url = `${config.serverUrl}/api/companies/${companyId}/business${path}`;
+  const serverUrl = config.serverUrl ?? DEFAULT_SERVER_URL;
+  assertLocalTarget(serverUrl);
+  const url = `${serverUrl}/api/companies/${companyId}/business${path}`;
   const res = await ctx.http.fetch(url, {
     ...options,
     headers: {

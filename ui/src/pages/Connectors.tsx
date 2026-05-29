@@ -167,7 +167,11 @@ export function Connectors() {
         <div>
           <h1 className="text-2xl font-semibold">Connectors</h1>
           <p className="text-sm text-muted-foreground">
-            Connect external services to sync data into this workspace.
+            Pull data from external services into this workspace.{" "}
+            <span className="text-amber-500 font-medium">
+              Read-only — this experimental system never writes back to your live
+              Shopify, Zoho, or other connected systems.
+            </span>
           </p>
         </div>
         <Button variant="outline" size="sm" asChild>
@@ -215,9 +219,16 @@ function ConnectorCard({ connector }: { connector: ResolvedConnector }) {
                 />
                 {statusLabel(connector.status)}
               </Badge>
+              <Badge
+                variant="secondary"
+                className="text-[10px] inline-flex items-center gap-1"
+                title="This system only reads from external services; it never writes back."
+              >
+                🔒 Read-only
+              </Badge>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {connector.authMethodLabel}
+              {connector.authMethodLabel} · pull only
             </p>
 
             {isConnected ? (

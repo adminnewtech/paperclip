@@ -59,3 +59,30 @@ describe("policy gate", () => {
     expect(d.rule).toBe("allow");
   });
 });
+
+import { describe as describe2, it as it2, expect as expect2 } from "vitest";
+
+// Re-export guard for testing without importing the whole worker (which calls runWorker).
+// The guard logic is duplicated minimally here to assert the read-only boundary contract.
+function isLocalHost(serverUrl: string): boolean {
+  let host: string;
+  try { host = new URL(serverUrl).hostname.toLowerCase(); } catch { return false; }
+  return (
+    host === "localhost" || host === "127.0.0.1" || host === "::1" ||
+    host === "0.0.0.0" || host.endsWith(".local") ||
+    host === "paperclip" || host.startsWith("paperclip.")
+  );
+}
+
+describe2("read-only boundary (local-target guard contract)", () => {
+  it2("allows the local Paperclip server", () => {
+    expect2(isLocalHost("http://localhost:3200")).toBe(true);
+    expect2(isLocalHost("http://127.0.0.1:3101")).toBe(true);
+    expect2(isLocalHost("https://paperclip.83-171-249-32.nip.io")).toBe(true); // the user's own Paperclip deployment (same system, not an external SaaS)
+  });
+  it2("blocks external systems (Shopify/Zoho) — never written to", () => {
+    expect2(isLocalHost("https://newtechq8.com")).toBe(false);
+    expect2(isLocalHost("https://books.zoho.com")).toBe(false);
+    expect2(isLocalHost("https://admin.shopify.com")).toBe(false);
+  });
+});

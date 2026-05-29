@@ -1,5 +1,15 @@
 # CLAUDE.md — paperclip (adminnewtech fork)
 
+## 🔒 قاعدة أمان حرجة: النظام تجريبي — قراءة فقط من الأنظمة الخارجية
+
+**هذا نظام تجريبي (sandbox). لا يعدّل ولا يكتب ولا يحذف أي شي في الأنظمة الخارجية المربوطة (Shopify · Zoho Books · Multica · أي connector).**
+
+- الأنظمة الخارجية = **مصادر قراءة فقط (read-only / pull-only)**. نسحب منها البيانات فقط.
+- **كل الكتابة على الـ DB المحلي (Paperclip Postgres) حصراً.**
+- ممنوع منعاً باتاً استدعاء أي أداة كتابة خارجية: `productUpdate`, `create-product`, `update-product`, `set-inventory`, `createTicket`, `createInvoice`, أو أي mutation على Shopify/Zoho.
+- مفروض بنيوياً: `businessFetch` في الـ plugin يرفض أي host غير محلي (`assertLocalTarget`). الـ connectors معلّمة "Read-only · pull only" في الواجهة.
+- عند المزامنة: اقرأ من الخارجي (MCP) → اكتب على Paperclip المحلي فقط. لا عكس أبداً.
+
 ## الأولوية القصوى: CodeGraph أولاً
 
 **قبل أي قراءة ملف أو grep → استخدم CodeGraph MCP تلقائياً.**
