@@ -2,6 +2,41 @@
 
 Guidance for human and AI contributors working in this repository.
 
+## 0. CodeGraph — Use Automatically (REQUIRED)
+
+This repository is indexed with [CodeGraph](https://github.com/appmap-org/codegraph) (`codegraph v0.9.6`).
+**Before reading any file manually, query CodeGraph first.** It covers 1,339 files / 21,860 nodes / 481 API routes.
+
+```bash
+# Find a symbol (function, type, route, constant)
+codegraph query "symbolName"
+
+# Understand how something works end-to-end
+codegraph context "how does heartbeat execution work"
+
+# Find all callers of a function
+codegraph callers "functionName"
+
+# Find everything a function calls
+codegraph callees "functionName"
+
+# Impact analysis before changing something
+codegraph impact "symbolName"
+
+# Browse file structure with symbol counts
+codegraph files --filter "server/src/routes"
+```
+
+**MCP mode** (auto-loaded in Claude Code via `.mcp.json`): CodeGraph is available as an MCP tool — use it proactively on every task. No manual `codegraph` CLI calls needed when MCP is active.
+
+**Key entry points** (confirmed by CodeGraph index):
+- `server/src/routes/business.ts:46` — Business Management API (24 symbols)
+- `packages/shared/src/business-modules.ts` — 8 modules catalog + 7 industry presets
+- `packages/db/src/schema/business_entities.ts` — JSONB entity table
+- `packages/plugins/plugin-business-agent-tools/src/worker.ts` — 5 agent tools
+- `server/src/services/heartbeat.ts` — Main agent execution orchestrator
+- `packages/plugins/sdk/src/types.ts` — Plugin SDK types (PluginContext, ToolResult, etc.)
+
 ## 1. Purpose
 
 Paperclip is a control plane for AI-agent companies.
