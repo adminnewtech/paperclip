@@ -73,6 +73,13 @@ The spec emphasizes ZATCA e-invoicing heavily. **Research finding (verified 2026
 
 ---
 
+## Progress (updated 2026-05-29)
+
+- ✅ **EPIC A** — Foundation: migration `0094` org/governance tables (`bos_*`) + risk-tiered **policy gate** (`policy.ts`, 16 tests) + **read-only boundary** guard (`assertLocalTarget`). RLS **designed & staged** (`epic-a3-rls-tenant-isolation.md`) — apply after env reset + `withTenant` wiring.
+- ✅ **EPIC C** — Customer 360 (`/customers`, `/customers/:name`): read-only aggregation over existing `crm/contact` + `sales/invoice`. No new tables.
+- ✅ **Connectors** (`/connectors`) + currency-aware money (KWD 3-decimals).
+- ⬜ Remaining: B, D, E, F, G, H, I, J, K, L. **F/G/H/J need new tables + migrations + a working server to build/verify** — blocked on a dev-env reset (postgres connection exhaustion from repeated restarts).
+
 ## 3. Re-Prioritized Roadmap (Epics)
 
 Sequenced for fastest value to Newtech Kuwait + the unbeatable foundation first. Each Epic → its own detailed task-plan before coding.
