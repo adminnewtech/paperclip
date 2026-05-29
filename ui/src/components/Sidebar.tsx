@@ -14,6 +14,7 @@ import {
   Settings,
   Briefcase,
   Plug,
+  Users,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "@/lib/router";
@@ -101,6 +102,7 @@ export function Sidebar() {
           <SidebarNavItem to="/goals" label="Goals" icon={Target} />
           <SidebarNavItem to="/business" label="Business" icon={Briefcase} />
           <SidebarNavItem to="/connectors" label="Connectors" icon={Plug} />
+          <SidebarNavItem to="/customers" label="Customers" icon={Users} />
           {showWorkspacesLink ? (
             <SidebarNavItem to="/workspaces" label="Workspaces" icon={GitBranch} />
           ) : null}
