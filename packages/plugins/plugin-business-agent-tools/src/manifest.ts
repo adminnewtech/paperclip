@@ -19,7 +19,9 @@ const manifest: PaperclipPluginManifestV1 = {
     "agents.read",
   ],
   entrypoints: {
-    worker: "./dist/worker.js",
+    // Use CJS shim on Windows: Node ESM cannot load bare C:\ paths via fork()
+    // worker-shim.cjs uses dynamic import() with file:// URL to load the ESM worker
+    worker: "./dist/worker-shim.cjs",
   },
   instanceConfigSchema: {
     type: "object",
