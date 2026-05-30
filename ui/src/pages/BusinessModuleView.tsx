@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, Link } from "@/lib/router";
 import { Briefcase, Plus, Search } from "lucide-react";
@@ -217,13 +218,18 @@ function EntityList({
                     <div className="font-medium truncate">
                       {row.name ?? row.code ?? row.id}
                     </div>
-                    <div className="text-xs text-muted-foreground truncate">
+                    <div className="text-xs text-muted-foreground truncate flex items-center gap-1.5">
                       {entity.fields
                         .filter((f) => f.key !== "name")
                         .slice(0, 2)
-                        .map((f) => formatField(f, row))
-                        .filter(Boolean)
-                        .join(" · ")}
+                        .map((f) => ({ f, node: renderFieldNode(f, row, companyId) }))
+                        .filter((x) => x.node)
+                        .map((x, i) => (
+                          <span key={x.f.key} className="flex items-center gap-1.5">
+                            {i > 0 && <span aria-hidden>·</span>}
+                            {x.node}
+                          </span>
+                        ))}
                     </div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
@@ -249,14 +255,74 @@ function EntityList({
   );
 }
 
-function formatField(
+function isReferenceField(field: BusinessEntityFieldSpec): boolean {
+  return (
+    field.type === "reference" ||
+    (field.key.endsWith("Id") && Boolean(field.refModule && field.refEntityType))
+  );
+}
+
+/**
+ * Renders a single secondary detail field on an entity card. Reference fields
+ * (foreign keys) become clickable links to the referenced module, with the
+ * referenced record's name resolved when available.
+ */
+function renderFieldNode(
   field: BusinessEntityFieldSpec,
   row: BusinessEntityRow,
-): string | null {
+  companyId: string,
+): ReactNode {
   const value = (row.data as Record<string, unknown>)[field.key];
   if (value === undefined || value === null || value === "") return null;
+
+  if (isReferenceField(field) && field.refModule && field.refEntityType) {
+    return (
+      <ReferenceValue
+        companyId={companyId}
+        label={field.label}
+        refModule={field.refModule}
+        refEntityType={field.refEntityType}
+        id={String(value)}
+      />
+    );
+  }
+
   if (typeof value === "object") return null;
-  return `${field.label}: ${String(value)}`;
+  return (
+    <span className="truncate">
+      {field.label}: {String(value)}
+    </span>
+  );
+}
+
+function ReferenceValue({
+  companyId,
+  label,
+  refModule,
+  refEntityType,
+  id,
+}: {
+  companyId: string;
+  label: string;
+  refModule: string;
+  refEntityType: string;
+  id: string;
+}) {
+  const refQuery = useReferenceEntities(companyId, refModule, refEntityType);
+  const match = refQuery.data?.entities.find((e) => e.id === id);
+  const display = match ? refLabel(match) : id;
+  return (
+    <span className="truncate">
+      {label}:{" "}
+      <Link
+        to={`/business/${refModule}`}
+        className="text-primary hover:underline"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {display}
+      </Link>
+    </span>
+  );
 }
 
 function StatusBadge({
@@ -359,6 +425,7 @@ function CreateEntityDialog({
             <FieldInput
               key={field.key}
               field={field}
+              companyId={companyId}
               value={values[field.key] ?? ""}
               onChange={(v) => setValues((prev) => ({ ...prev, [field.key]: v }))}
             />
@@ -384,10 +451,12 @@ function CreateEntityDialog({
 
 function FieldInput({
   field,
+  companyId,
   value,
   onChange,
 }: {
   field: BusinessEntityFieldSpec;
+  companyId: string;
   value: string;
   onChange: (v: string) => void;
 }) {
@@ -397,7 +466,15 @@ function FieldInput({
         {field.label}
         {field.required && <span className="text-destructive ml-0.5">*</span>}
       </Label>
-      {field.type === "textarea" ? (
+      {field.type === "reference" && field.refModule && field.refEntityType ? (
+        <ReferenceSelect
+          companyId={companyId}
+          refModule={field.refModule}
+          refEntityType={field.refEntityType}
+          value={value}
+          onChange={onChange}
+        />
+      ) : field.type === "textarea" ? (
         <Textarea
           rows={3}
           value={value}
@@ -435,5 +512,81 @@ function FieldInput({
         <p className="text-[11px] text-muted-foreground">{field.hint}</p>
       )}
     </div>
+  );
+}
+
+function refLabel(row: BusinessEntityRow): string {
+  return row.name ?? row.code ?? row.id;
+}
+
+/**
+ * Loads the entities of a referenced module/type so a foreign-key field can be
+ * picked from / resolved by id instead of typed as raw text.
+ */
+function useReferenceEntities(
+  companyId: string,
+  refModule: string,
+  refEntityType: string,
+) {
+  return useQuery({
+    queryKey: queryKeys.business.entities(companyId, refModule, refEntityType),
+    queryFn: () =>
+      businessApi.listEntities(companyId, refModule, refEntityType, {
+        limit: 200,
+      }),
+  });
+}
+
+function ReferenceSelect({
+  companyId,
+  refModule,
+  refEntityType,
+  value,
+  onChange,
+}: {
+  companyId: string;
+  refModule: string;
+  refEntityType: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const refQuery = useReferenceEntities(companyId, refModule, refEntityType);
+  const options = refQuery.data?.entities ?? [];
+
+  if (refQuery.isLoading) {
+    return (
+      <Select disabled value="">
+        <SelectTrigger>
+          <SelectValue placeholder="Loading…" />
+        </SelectTrigger>
+        <SelectContent />
+      </Select>
+    );
+  }
+
+  if (options.length === 0) {
+    return (
+      <Select disabled value="">
+        <SelectTrigger>
+          <SelectValue placeholder="No records available" />
+        </SelectTrigger>
+        <SelectContent />
+      </Select>
+    );
+  }
+
+  return (
+    <Select value={value} onValueChange={onChange}>
+      <SelectTrigger>
+        <SelectValue placeholder="Select…" />
+      </SelectTrigger>
+      <SelectContent>
+        {options.map((opt) => (
+          <SelectItem key={opt.id} value={opt.id}>
+            {refLabel(opt)}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

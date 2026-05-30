@@ -25,11 +25,26 @@ export type BusinessEntityType = string;
 export interface BusinessEntityFieldSpec {
   key: string;
   label: string;
-  type: "text" | "textarea" | "number" | "currency" | "date" | "select" | "email" | "phone" | "url" | "json";
+  type:
+    | "text"
+    | "textarea"
+    | "number"
+    | "currency"
+    | "date"
+    | "select"
+    | "email"
+    | "phone"
+    | "url"
+    | "json"
+    | "reference";
   required?: boolean;
   options?: Array<{ value: string; label: string }>;
   group?: string;
   hint?: string;
+  /** For type "reference": the module the reference points to. */
+  refModule?: BusinessModuleKey;
+  /** For type "reference": the entity type within that module. */
+  refEntityType?: string;
 }
 
 export interface BusinessEntitySpec {
@@ -124,7 +139,7 @@ const CRM: BusinessModuleSpec = {
         { key: "name", label: "Deal name", type: "text", required: true },
         { key: "amount", label: "Expected amount", type: "currency" },
         { key: "closeDate", label: "Expected close date", type: "date" },
-        { key: "contactId", label: "Primary contact", type: "text" },
+        { key: "contactId", label: "Primary contact", type: "reference", refModule: "crm", refEntityType: "contact" },
       ],
     },
   ],
@@ -167,7 +182,7 @@ const SALES: BusinessModuleSpec = {
         { value: "rejected", label: "Rejected", tone: "danger" },
       ],
       fields: [
-        { key: "customerId", label: "Customer", type: "text", required: true },
+        { key: "customerId", label: "Customer", type: "reference", required: true, refModule: "sales", refEntityType: "customer" },
         { key: "issueDate", label: "Issue date", type: "date" },
         { key: "validUntil", label: "Valid until", type: "date" },
         { key: "amount", label: "Total amount", type: "currency" },
@@ -189,7 +204,7 @@ const SALES: BusinessModuleSpec = {
         { value: "void", label: "Void", tone: "neutral" },
       ],
       fields: [
-        { key: "customerId", label: "Customer", type: "text", required: true },
+        { key: "customerId", label: "Customer", type: "reference", required: true, refModule: "sales", refEntityType: "customer" },
         { key: "issueDate", label: "Issue date", type: "date" },
         { key: "dueDate", label: "Due date", type: "date" },
         { key: "amount", label: "Total amount", type: "currency" },
@@ -205,7 +220,7 @@ const SALES: BusinessModuleSpec = {
       primaryField: "code",
       amountField: true,
       fields: [
-        { key: "invoiceId", label: "Invoice", type: "text" },
+        { key: "invoiceId", label: "Invoice", type: "reference", refModule: "sales", refEntityType: "invoice" },
         { key: "method", label: "Payment method", type: "select", options: [
           { value: "cash", label: "Cash" },
           { value: "bank_transfer", label: "Bank transfer" },
@@ -271,8 +286,8 @@ const INVENTORY: BusinessModuleSpec = {
       icon: "arrow-right-left",
       primaryField: "code",
       fields: [
-        { key: "productId", label: "Product", type: "text", required: true },
-        { key: "warehouseId", label: "Warehouse", type: "text", required: true },
+        { key: "productId", label: "Product", type: "reference", required: true, refModule: "inventory", refEntityType: "product" },
+        { key: "warehouseId", label: "Warehouse", type: "reference", required: true, refModule: "inventory", refEntityType: "warehouse" },
         { key: "kind", label: "Type", type: "select", required: true, options: [
           { value: "in", label: "Stock in" },
           { value: "out", label: "Stock out" },
@@ -381,7 +396,7 @@ const HR: BusinessModuleSpec = {
         { value: "rejected", label: "Rejected", tone: "danger" },
       ],
       fields: [
-        { key: "employeeId", label: "Employee", type: "text", required: true },
+        { key: "employeeId", label: "Employee", type: "reference", required: true, refModule: "hr", refEntityType: "employee" },
         { key: "kind", label: "Type", type: "select", options: [
           { value: "annual", label: "Annual" },
           { value: "sick", label: "Sick" },
@@ -421,7 +436,7 @@ const HELPDESK: BusinessModuleSpec = {
       fields: [
         { key: "subject", label: "Subject", type: "text", required: true },
         { key: "description", label: "Description", type: "textarea" },
-        { key: "customerId", label: "Customer", type: "text" },
+        { key: "customerId", label: "Customer", type: "reference", refModule: "sales", refEntityType: "customer" },
         { key: "priority", label: "Priority", type: "select", options: [
           { value: "low", label: "Low" },
           { value: "normal", label: "Normal" },
