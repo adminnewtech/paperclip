@@ -5,6 +5,7 @@ import {
   LogOut,
   type LucideIcon,
   Moon,
+  Palette,
   Settings,
   UserRound,
   Sun,
@@ -15,7 +16,7 @@ import { Link } from "@/lib/router";
 import { authApi } from "@/api/auth";
 import { queryKeys } from "@/lib/queryKeys";
 import { useSidebar } from "../context/SidebarContext";
-import { useTheme } from "../context/ThemeContext";
+import { PALETTES, useTheme } from "../context/ThemeContext";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "../lib/utils";
@@ -111,7 +112,7 @@ export function SidebarAccountMenu({
   const [internalOpen, setInternalOpen] = useState(false);
   const queryClient = useQueryClient();
   const { isMobile, setSidebarOpen } = useSidebar();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, palette, setPalette } = useTheme();
   const open = controlledOpen ?? internalOpen;
   const setOpen = onOpenChange ?? setInternalOpen;
   const { data: session } = useQuery({
@@ -224,6 +225,34 @@ export function SidebarAccountMenu({
                   setOpen(false);
                 }}
               />
+              <div className="flex items-start gap-3 rounded-xl px-3 py-3 text-left">
+                <span className="mt-0.5 rounded-lg border border-border bg-background/70 p-2 text-muted-foreground">
+                  <Palette className="size-4" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium text-foreground">Theme color</span>
+                  <span className="mt-2 flex items-center gap-2">
+                    {PALETTES.map((entry) => {
+                      const isActive = entry.key === palette;
+                      return (
+                        <button
+                          key={entry.key}
+                          type="button"
+                          title={entry.label}
+                          aria-label={`Use ${entry.label} theme color`}
+                          aria-pressed={isActive}
+                          onClick={() => setPalette(entry.key)}
+                          className={cn(
+                            "size-5 rounded-full border border-border transition-transform hover:scale-110",
+                            isActive && "ring-2 ring-ring ring-offset-2 ring-offset-popover",
+                          )}
+                          style={{ backgroundColor: entry.swatch }}
+                        />
+                      );
+                    })}
+                  </span>
+                </span>
+              </div>
               {deploymentMode === "authenticated" ? (
                 <button
                   type="button"

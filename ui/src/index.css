@@ -146,6 +146,92 @@
   --paperclip-doc-annotation-highlight-resolved: #713f12;
 }
 
+/* Named color palettes — override brand hue only (light + dark variants).
+   Lightness/dark mode is still controlled by the .dark class. */
+[data-theme="gold"] {
+  --primary: oklch(0.72 0.15 85);
+  --primary-foreground: oklch(0.18 0.02 85);
+  --ring: oklch(0.72 0.15 85);
+  --sidebar-primary: oklch(0.72 0.15 85);
+  --sidebar-primary-foreground: oklch(0.18 0.02 85);
+  --accent: oklch(0.95 0.03 85);
+  --accent-foreground: oklch(0.3 0.05 85);
+  --chart-1: oklch(0.72 0.15 85);
+}
+[data-theme="gold"].dark {
+  --primary: oklch(0.78 0.14 85);
+  --primary-foreground: oklch(0.18 0.02 85);
+  --ring: oklch(0.78 0.14 85);
+  --sidebar-primary: oklch(0.78 0.14 85);
+  --sidebar-primary-foreground: oklch(0.18 0.02 85);
+  --accent: oklch(0.3 0.05 85);
+  --accent-foreground: oklch(0.95 0.03 85);
+  --chart-1: oklch(0.78 0.14 85);
+}
+
+[data-theme="ocean"] {
+  --primary: oklch(0.6 0.16 240);
+  --primary-foreground: oklch(0.98 0.01 240);
+  --ring: oklch(0.6 0.16 240);
+  --sidebar-primary: oklch(0.6 0.16 240);
+  --sidebar-primary-foreground: oklch(0.98 0.01 240);
+  --accent: oklch(0.95 0.03 240);
+  --accent-foreground: oklch(0.3 0.08 240);
+  --chart-1: oklch(0.6 0.16 240);
+}
+[data-theme="ocean"].dark {
+  --primary: oklch(0.68 0.15 240);
+  --primary-foreground: oklch(0.18 0.03 240);
+  --ring: oklch(0.68 0.15 240);
+  --sidebar-primary: oklch(0.68 0.15 240);
+  --sidebar-primary-foreground: oklch(0.18 0.03 240);
+  --accent: oklch(0.3 0.06 240);
+  --accent-foreground: oklch(0.95 0.03 240);
+  --chart-1: oklch(0.68 0.15 240);
+}
+
+[data-theme="emerald"] {
+  --primary: oklch(0.62 0.15 155);
+  --primary-foreground: oklch(0.98 0.01 155);
+  --ring: oklch(0.62 0.15 155);
+  --sidebar-primary: oklch(0.62 0.15 155);
+  --sidebar-primary-foreground: oklch(0.98 0.01 155);
+  --accent: oklch(0.95 0.03 155);
+  --accent-foreground: oklch(0.3 0.07 155);
+  --chart-1: oklch(0.62 0.15 155);
+}
+[data-theme="emerald"].dark {
+  --primary: oklch(0.7 0.14 155);
+  --primary-foreground: oklch(0.18 0.03 155);
+  --ring: oklch(0.7 0.14 155);
+  --sidebar-primary: oklch(0.7 0.14 155);
+  --sidebar-primary-foreground: oklch(0.18 0.03 155);
+  --accent: oklch(0.3 0.06 155);
+  --accent-foreground: oklch(0.95 0.03 155);
+  --chart-1: oklch(0.7 0.14 155);
+}
+
+[data-theme="violet"] {
+  --primary: oklch(0.58 0.2 290);
+  --primary-foreground: oklch(0.98 0.01 290);
+  --ring: oklch(0.58 0.2 290);
+  --sidebar-primary: oklch(0.58 0.2 290);
+  --sidebar-primary-foreground: oklch(0.98 0.01 290);
+  --accent: oklch(0.95 0.03 290);
+  --accent-foreground: oklch(0.3 0.09 290);
+  --chart-1: oklch(0.58 0.2 290);
+}
+[data-theme="violet"].dark {
+  --primary: oklch(0.66 0.18 290);
+  --primary-foreground: oklch(0.18 0.03 290);
+  --ring: oklch(0.66 0.18 290);
+  --sidebar-primary: oklch(0.66 0.18 290);
+  --sidebar-primary-foreground: oklch(0.18 0.03 290);
+  --accent: oklch(0.3 0.07 290);
+  --accent-foreground: oklch(0.95 0.03 290);
+  --chart-1: oklch(0.66 0.18 290);
+}
+
 ::highlight(paperclip-doc-annotation-open) {
   background-color: var(--paperclip-doc-annotation-highlight-open);
   color: inherit;
