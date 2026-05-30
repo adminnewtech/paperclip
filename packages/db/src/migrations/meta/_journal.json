@@ -673,6 +673,27 @@
       "when": 1778300000000,
       "tag": "0095_business_os_commerce",
       "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "7",
+      "when": 1778400000000,
+      "tag": "0096_business_os_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "7",
+      "when": 1778500000000,
+      "tag": "0097_business_os_finance",
+      "breakpoints": true
+    },
+    {
+      "idx": 98,
+      "version": "7",
+      "when": 1778600000000,
+      "tag": "0098_business_os_purchasing",
+      "breakpoints": true
     }
   ]
 }
