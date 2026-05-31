@@ -163,3 +163,7 @@ export { bosJourney } from "./bos_journey.js";
 // Wave 5 — AI Command Center
 export { bosBriefing } from "./bos_briefing.js";
 export { bosInsight } from "./bos_insight.js";
+// Wave 6 — GCC compliance
+export { bosEinvoice } from "./bos_einvoice.js";
+export { bosTaxRegistration } from "./bos_tax_registration.js";
+export { bosPaymentGateway } from "./bos_payment_gateway.js";

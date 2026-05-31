@@ -55,6 +55,7 @@ import { hrRoutes } from "./routes/hr.js";
 import { projectsRoutes } from "./routes/bos-projects.js";
 import { marketingRoutes } from "./routes/bos-marketing.js";
 import { commandCenterRoutes } from "./routes/command-center.js";
+import { gccRoutes } from "./routes/gcc.js";
 import { readBrandedStaticIndexHtml } from "./static-index-html.js";
 import { applyUiBranding } from "./ui-branding.js";
 import { logger } from "./middleware/logger.js";
@@ -261,6 +262,7 @@ export async function createApp(
   api.use(projectsRoutes(db));
   api.use(marketingRoutes(db));
   api.use(commandCenterRoutes(db));
+  api.use(gccRoutes(db));
   const pluginRegistry = pluginRegistryService(db);
   const eventBus = createPluginEventBus();
   setPluginEventBus(eventBus);

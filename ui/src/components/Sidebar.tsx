@@ -26,6 +26,7 @@ import {
   FolderKanban,
   Megaphone,
   Sparkles,
+  ShieldCheck,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "@/lib/router";
@@ -124,6 +125,8 @@ export function Sidebar() {
           <SidebarNavItem to="/hr" label="HR" icon={UsersRound} />
           <SidebarNavItem to="/projects-mgmt" label="Projects" icon={FolderKanban} />
           <SidebarNavItem to="/marketing" label="Marketing" icon={Megaphone} />
+          <SidebarNavItem to="/command-center" label="Command Center" icon={Sparkles} />
+          <SidebarNavItem to="/compliance" label="Compliance" icon={ShieldCheck} />
           <SidebarNavItem to="/finance" label="Finance" icon={Banknote} />
           <SidebarNavItem to="/settings/business" label="Business Settings" icon={Settings} />
           {showWorkspacesLink ? (
