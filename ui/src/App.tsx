@@ -71,6 +71,11 @@ import { BusinessSettings } from "./pages/BusinessSettings";
 import { Finance } from "./pages/Finance";
 import { Purchasing } from "./pages/Purchasing";
 import { Storefront } from "./pages/Storefront";
+import { CRM } from "./pages/CRM";
+import { Helpdesk } from "./pages/Helpdesk";
+import { HR } from "./pages/HR";
+import { ProjectsMgmt } from "./pages/ProjectsMgmt";
+import { Marketing } from "./pages/Marketing";
 import { useCompany } from "./context/CompanyContext";
 import { useDialogActions } from "./context/DialogContext";
 import { loadLastInboxTab } from "./lib/inbox";
@@ -144,6 +149,11 @@ function boardRoutes() {
       <Route path="finance" element={<Finance />} />
       <Route path="purchasing" element={<Purchasing />} />
       <Route path="storefront" element={<Storefront />} />
+      <Route path="crm" element={<CRM />} />
+      <Route path="helpdesk" element={<Helpdesk />} />
+      <Route path="hr" element={<HR />} />
+      <Route path="projects-mgmt" element={<ProjectsMgmt />} />
+      <Route path="marketing" element={<Marketing />} />
       <Route path="settings/business" element={<BusinessSettings />} />
       <Route path="execution-workspaces/:workspaceId" element={<ExecutionWorkspaceDetail />} />
       <Route path="execution-workspaces/:workspaceId/services" element={<ExecutionWorkspaceDetail />} />
@@ -369,6 +379,11 @@ export function App() {
           <Route path="finance" element={<UnprefixedBoardRedirect />} />
           <Route path="purchasing" element={<UnprefixedBoardRedirect />} />
           <Route path="storefront" element={<UnprefixedBoardRedirect />} />
+          <Route path="crm" element={<UnprefixedBoardRedirect />} />
+          <Route path="helpdesk" element={<UnprefixedBoardRedirect />} />
+          <Route path="hr" element={<UnprefixedBoardRedirect />} />
+          <Route path="projects-mgmt" element={<UnprefixedBoardRedirect />} />
+          <Route path="marketing" element={<UnprefixedBoardRedirect />} />
           <Route path="settings/business" element={<UnprefixedBoardRedirect />} />
           <Route path=":companyPrefix" element={<Layout />}>
             {boardRoutes()}

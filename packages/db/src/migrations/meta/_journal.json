@@ -708,6 +708,27 @@
       "when": 1778700000000,
       "tag": "0100_business_os_storefront",
       "breakpoints": true
+    },
+    {
+      "idx": 101,
+      "version": "7",
+      "when": 1778800000000,
+      "tag": "0101_business_os_crm",
+      "breakpoints": true
+    },
+    {
+      "idx": 102,
+      "version": "7",
+      "when": 1778900000000,
+      "tag": "0102_business_os_helpdesk_hr",
+      "breakpoints": true
+    },
+    {
+      "idx": 103,
+      "version": "7",
+      "when": 1779000000000,
+      "tag": "0103_business_os_projects_marketing",
+      "breakpoints": true
     }
   ]
 }

@@ -20,6 +20,11 @@ import {
   Store,
   ShoppingCart,
   Banknote,
+  Contact,
+  LifeBuoy,
+  UsersRound,
+  FolderKanban,
+  Megaphone,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "@/lib/router";
@@ -113,6 +118,11 @@ export function Sidebar() {
           <SidebarNavItem to="/purchasing" label="Purchasing" icon={ShoppingBag} />
           <SidebarNavItem to="/pos" label="Point of Sale" icon={ShoppingCart} />
           <SidebarNavItem to="/storefront" label="Storefront" icon={Store} />
+          <SidebarNavItem to="/crm" label="CRM" icon={Contact} />
+          <SidebarNavItem to="/helpdesk" label="Helpdesk" icon={LifeBuoy} />
+          <SidebarNavItem to="/hr" label="HR" icon={UsersRound} />
+          <SidebarNavItem to="/projects-mgmt" label="Projects" icon={FolderKanban} />
+          <SidebarNavItem to="/marketing" label="Marketing" icon={Megaphone} />
           <SidebarNavItem to="/finance" label="Finance" icon={Banknote} />
           <SidebarNavItem to="/settings/business" label="Business Settings" icon={Settings} />
           {showWorkspacesLink ? (

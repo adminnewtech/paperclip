@@ -29,3 +29,8 @@ export { settingsRoutes } from "./settings.js";
 export { financeRoutes } from "./finance.js";
 export { purchasingRoutes } from "./purchasing.js";
 export { storefrontRoutes } from "./storefront.js";
+export { crmRoutes } from "./crm.js";
+export { helpdeskRoutes } from "./helpdesk.js";
+export { hrRoutes } from "./hr.js";
+export { projectsRoutes } from "./bos-projects.js";
+export { marketingRoutes } from "./bos-marketing.js";
