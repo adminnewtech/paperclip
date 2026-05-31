@@ -78,6 +78,7 @@ import { ProjectsMgmt } from "./pages/ProjectsMgmt";
 import { Marketing } from "./pages/Marketing";
 import { CommandCenter } from "./pages/CommandCenter";
 import { Compliance } from "./pages/Compliance";
+import { Analytics } from "./pages/Analytics";
 import { useCompany } from "./context/CompanyContext";
 import { useDialogActions } from "./context/DialogContext";
 import { loadLastInboxTab } from "./lib/inbox";
@@ -158,6 +159,7 @@ function boardRoutes() {
       <Route path="marketing" element={<Marketing />} />
       <Route path="command-center" element={<CommandCenter />} />
       <Route path="compliance" element={<Compliance />} />
+      <Route path="analytics" element={<Analytics />} />
       <Route path="settings/business" element={<BusinessSettings />} />
       <Route path="execution-workspaces/:workspaceId" element={<ExecutionWorkspaceDetail />} />
       <Route path="execution-workspaces/:workspaceId/services" element={<ExecutionWorkspaceDetail />} />
@@ -390,6 +392,7 @@ export function App() {
           <Route path="marketing" element={<UnprefixedBoardRedirect />} />
           <Route path="command-center" element={<UnprefixedBoardRedirect />} />
           <Route path="compliance" element={<UnprefixedBoardRedirect />} />
+          <Route path="analytics" element={<UnprefixedBoardRedirect />} />
           <Route path="settings/business" element={<UnprefixedBoardRedirect />} />
           <Route path=":companyPrefix" element={<Layout />}>
             {boardRoutes()}

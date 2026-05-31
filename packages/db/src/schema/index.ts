@@ -167,3 +167,7 @@ export { bosInsight } from "./bos_insight.js";
 export { bosEinvoice } from "./bos_einvoice.js";
 export { bosTaxRegistration } from "./bos_tax_registration.js";
 export { bosPaymentGateway } from "./bos_payment_gateway.js";
+// Wave 7 — Analytics/BI
+export { bosDashboard } from "./bos_dashboard.js";
+export { bosReport } from "./bos_report.js";
+export { bosSavedQuery } from "./bos_saved_query.js";

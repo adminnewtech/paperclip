@@ -743,6 +743,13 @@
       "when": 1779200000000,
       "tag": "0105_business_os_gcc",
       "breakpoints": true
+    },
+    {
+      "idx": 106,
+      "version": "7",
+      "when": 1779300000000,
+      "tag": "0106_business_os_analytics",
+      "breakpoints": true
     }
   ]
 }

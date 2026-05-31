@@ -27,6 +27,7 @@ import {
   Megaphone,
   Sparkles,
   ShieldCheck,
+  BarChart3,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "@/lib/router";
@@ -127,6 +128,7 @@ export function Sidebar() {
           <SidebarNavItem to="/marketing" label="Marketing" icon={Megaphone} />
           <SidebarNavItem to="/command-center" label="Command Center" icon={Sparkles} />
           <SidebarNavItem to="/compliance" label="Compliance" icon={ShieldCheck} />
+          <SidebarNavItem to="/analytics" label="Analytics" icon={BarChart3} />
           <SidebarNavItem to="/finance" label="Finance" icon={Banknote} />
           <SidebarNavItem to="/settings/business" label="Business Settings" icon={Settings} />
           {showWorkspacesLink ? (
