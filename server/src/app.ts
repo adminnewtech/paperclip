@@ -42,6 +42,7 @@ import { accessRoutes } from "./routes/access.js";
 import { pluginRoutes } from "./routes/plugins.js";
 import { adapterRoutes } from "./routes/adapters.js";
 import { pluginUiStaticRoutes } from "./routes/plugin-ui-static.js";
+// Business OS
 import { businessRoutes } from "./routes/business.js";
 import { commerceRoutes } from "./routes/commerce.js";
 import { settingsRoutes } from "./routes/settings.js";
@@ -237,14 +238,15 @@ export async function createApp(
   api.use(resourceMembershipRoutes(db));
   api.use(inboxDismissalRoutes(db));
   api.use(instanceSettingsRoutes(db));
+  if (opts.databaseBackupService) {
+    api.use(instanceDatabaseBackupRoutes(opts.databaseBackupService));
+  }
+  // Business OS
   api.use(businessRoutes(db));
   api.use(commerceRoutes(db));
   api.use(settingsRoutes(db));
   api.use(financeRoutes(db));
   api.use(purchasingRoutes(db));
-  if (opts.databaseBackupService) {
-    api.use(instanceDatabaseBackupRoutes(opts.databaseBackupService));
-  }
   const pluginRegistry = pluginRegistryService(db);
   const eventBus = createPluginEventBus();
   setPluginEventBus(eventBus);

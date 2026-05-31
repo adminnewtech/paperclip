@@ -22,6 +22,7 @@ export { instanceSettingsRoutes } from "./instance-settings.js";
 export { instanceDatabaseBackupRoutes } from "./instance-database-backups.js";
 export { cloudUpstreamRoutes } from "./cloud-upstreams.js";
 
+// Business OS
 export { businessRoutes } from "./business.js";
 export { commerceRoutes } from "./commerce.js";
 export { settingsRoutes } from "./settings.js";

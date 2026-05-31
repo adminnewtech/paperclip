@@ -31,11 +31,6 @@
           if (themeColorMeta) {
             themeColorMeta.setAttribute("content", isDark ? darkThemeColor : lightThemeColor);
           }
-          const paletteKey = "paperclip.palette";
-          const palettes = ["default", "gold", "ocean", "emerald", "violet"];
-          const storedPalette = window.localStorage.getItem(paletteKey);
-          const palette = palettes.indexOf(storedPalette) >= 0 ? storedPalette : "default";
-          document.documentElement.dataset.theme = palette;
         } catch {
           document.documentElement.classList.add("dark");
           document.documentElement.style.colorScheme = "dark";

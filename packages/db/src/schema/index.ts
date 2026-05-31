@@ -84,6 +84,7 @@ export { pluginJobs, pluginJobRuns } from "./plugin_jobs.js";
 export { pluginWebhookDeliveries } from "./plugin_webhooks.js";
 export { pluginLogs } from "./plugin_logs.js";
 
+// Business OS
 export { businessModules } from "./business_modules.js";
 export { businessEntities } from "./business_entities.js";
 

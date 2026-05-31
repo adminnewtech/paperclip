@@ -1858,9 +1858,7 @@ export function pluginLoader(
       // (for example @paperclipai/shared exports). Run those workers through
       // the tsx loader so first-party example plugins work in development.
       if (activePlugin.packagePath && existsSync(DEV_TSX_LOADER_PATH)) {
-        // On Windows, Node ESM requires file:// URLs for --import paths
-        const tsxLoaderUrl = pathToFileURL(DEV_TSX_LOADER_PATH).href;
-        workerOptions.execArgv = ["--import", tsxLoaderUrl];
+        workerOptions.execArgv = ["--import", DEV_TSX_LOADER_PATH];
       }
 
       await workerManager.startWorker(pluginId, workerOptions);

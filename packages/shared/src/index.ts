@@ -1249,6 +1249,7 @@ export type {
   EnvironmentSupportStatus,
 } from "./environment-support.js";
 
+// Business OS
 export {
   BUSINESS_MODULES,
   INDUSTRY_PRESETS,
