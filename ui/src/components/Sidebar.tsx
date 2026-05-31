@@ -25,6 +25,7 @@ import {
   UsersRound,
   FolderKanban,
   Megaphone,
+  Sparkles,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "@/lib/router";

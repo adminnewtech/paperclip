@@ -160,3 +160,6 @@ export { bosCampaign } from "./bos_campaign.js";
 export { bosAudience } from "./bos_audience.js";
 export { bosEmailTemplate } from "./bos_email_template.js";
 export { bosJourney } from "./bos_journey.js";
+// Wave 5 — AI Command Center
+export { bosBriefing } from "./bos_briefing.js";
+export { bosInsight } from "./bos_insight.js";

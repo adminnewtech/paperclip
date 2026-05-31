@@ -34,3 +34,4 @@ export { helpdeskRoutes } from "./helpdesk.js";
 export { hrRoutes } from "./hr.js";
 export { projectsRoutes } from "./bos-projects.js";
 export { marketingRoutes } from "./bos-marketing.js";
+export { commandCenterRoutes } from "./command-center.js";
