@@ -70,6 +70,7 @@ import { POS } from "./pages/POS";
 import { BusinessSettings } from "./pages/BusinessSettings";
 import { Finance } from "./pages/Finance";
 import { Purchasing } from "./pages/Purchasing";
+import { Storefront } from "./pages/Storefront";
 import { useCompany } from "./context/CompanyContext";
 import { useDialogActions } from "./context/DialogContext";
 import { loadLastInboxTab } from "./lib/inbox";
@@ -142,6 +143,7 @@ function boardRoutes() {
       <Route path="pos" element={<POS />} />
       <Route path="finance" element={<Finance />} />
       <Route path="purchasing" element={<Purchasing />} />
+      <Route path="storefront" element={<Storefront />} />
       <Route path="settings/business" element={<BusinessSettings />} />
       <Route path="execution-workspaces/:workspaceId" element={<ExecutionWorkspaceDetail />} />
       <Route path="execution-workspaces/:workspaceId/services" element={<ExecutionWorkspaceDetail />} />
@@ -366,6 +368,7 @@ export function App() {
           <Route path="pos" element={<UnprefixedBoardRedirect />} />
           <Route path="finance" element={<UnprefixedBoardRedirect />} />
           <Route path="purchasing" element={<UnprefixedBoardRedirect />} />
+          <Route path="storefront" element={<UnprefixedBoardRedirect />} />
           <Route path="settings/business" element={<UnprefixedBoardRedirect />} />
           <Route path=":companyPrefix" element={<Layout />}>
             {boardRoutes()}

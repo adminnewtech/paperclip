@@ -48,6 +48,7 @@ import { commerceRoutes } from "./routes/commerce.js";
 import { settingsRoutes } from "./routes/settings.js";
 import { financeRoutes } from "./routes/finance.js";
 import { purchasingRoutes } from "./routes/purchasing.js";
+import { storefrontRoutes } from "./routes/storefront.js";
 import { readBrandedStaticIndexHtml } from "./static-index-html.js";
 import { applyUiBranding } from "./ui-branding.js";
 import { logger } from "./middleware/logger.js";
@@ -247,6 +248,7 @@ export async function createApp(
   api.use(settingsRoutes(db));
   api.use(financeRoutes(db));
   api.use(purchasingRoutes(db));
+  api.use(storefrontRoutes(db));
   const pluginRegistry = pluginRegistryService(db);
   const eventBus = createPluginEventBus();
   setPluginEventBus(eventBus);

@@ -17,6 +17,7 @@ import {
   Users,
   Warehouse,
   ShoppingBag,
+  Store,
   ShoppingCart,
   Banknote,
 } from "lucide-react";
@@ -111,6 +112,7 @@ export function Sidebar() {
           <SidebarNavItem to="/warehouses" label="Warehouses" icon={Warehouse} />
           <SidebarNavItem to="/purchasing" label="Purchasing" icon={ShoppingBag} />
           <SidebarNavItem to="/pos" label="Point of Sale" icon={ShoppingCart} />
+          <SidebarNavItem to="/storefront" label="Storefront" icon={Store} />
           <SidebarNavItem to="/finance" label="Finance" icon={Banknote} />
           <SidebarNavItem to="/settings/business" label="Business Settings" icon={Settings} />
           {showWorkspacesLink ? (

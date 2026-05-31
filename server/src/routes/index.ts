@@ -28,3 +28,4 @@ export { commerceRoutes } from "./commerce.js";
 export { settingsRoutes } from "./settings.js";
 export { financeRoutes } from "./finance.js";
 export { purchasingRoutes } from "./purchasing.js";
+export { storefrontRoutes } from "./storefront.js";

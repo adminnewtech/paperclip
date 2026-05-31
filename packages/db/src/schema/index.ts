@@ -124,3 +124,14 @@ export { bosPurchaseOrder } from "./bos_purchase_order.js";
 export { bosPoLine } from "./bos_po_line.js";
 export { bosGoodsReceipt } from "./bos_goods_receipt.js";
 export { bosVendorBill } from "./bos_vendor_bill.js";
+// Wave 3 — Commerce depth (Storefront)
+export { bosStore } from "./bos_store.js";
+export { bosStorePage } from "./bos_store_page.js";
+export { bosCollection } from "./bos_collection.js";
+export { bosChannel } from "./bos_channel.js";
+export { bosChannelListing } from "./bos_channel_listing.js";
+export { bosDiscount } from "./bos_discount.js";
+export { bosOnlineOrder } from "./bos_online_order.js";
+export { bosFulfillment } from "./bos_fulfillment.js";
+export { bosShippingZone } from "./bos_shipping_zone.js";
+export { bosShippingRate } from "./bos_shipping_rate.js";
